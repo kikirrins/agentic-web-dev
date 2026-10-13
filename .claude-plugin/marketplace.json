@@ -1,0 +1,17 @@
+{
+  "name": "agentic-web-dev",
+  "owner": {
+    "name": "Mty Agentic Labs"
+  },
+  "plugins": [
+    {
+      "name": "dev-team",
+      "source": "./plugins/dev-team",
+      "description": "Agentic web development team: tech lead, frontend designer, frontend and backend engineers, QA and Shopify developer, with 30 skills.",
+      "author": {
+        "name": "Mty Agentic Labs"
+      }
+    }
+  ],
+  "description": "Agents and skills for agentic web development (Claude plugin) by Mty Agentic Labs."
+}
