@@ -1,0 +1,53 @@
+<!doctype html>
+<!-- Clase 1 · Paso 03 · Navbar: HTML + la barra -->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Maison Luz</title>
+  <style>
+    :root {
+      --crema: #f6f1ea;
+      --negro: #161412;
+      --rubor: #e8c4b8;
+    }
+    body {
+      margin: 0;
+      background: var(--crema);
+      color: var(--negro);
+      font-family: Helvetica, Arial, sans-serif;
+    }
+    h1, h3, h4 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: normal;   /* la serif da el toque editorial */
+    }
+
+    /* ▼▼▼ NUEVO ▼▼▼ */
+    .navbar {
+      position: sticky;      /* se queda pegado arriba */
+      top: 0;
+      display: flex;         /* todo en una fila */
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      background: var(--negro);
+    }
+    /* ▲▲▲ fin de lo nuevo ▲▲▲ */
+  </style>
+</head>
+<body>
+
+  <!-- ▼▼▼ NUEVO ▼▼▼ -->
+  <nav class="navbar">
+    <a href="#" class="logo">MAISON LUZ</a>
+    <a href="#nuevo">Nuevo</a>
+    <a href="#coleccion">Colección</a>
+    <a href="#club">Club</a>
+    <a href="#bolsa" class="btn">Bolsa (0)</a>
+  </nav>
+  <!-- ▲▲▲ fin de lo nuevo ▲▲▲ -->
+
+  <script>
+    /* el JavaScript va aquí, hasta abajo */
+  </script>
+</body>
+</html>

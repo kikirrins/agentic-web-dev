@@ -1,0 +1,72 @@
+<!doctype html>
+<!-- Clase 1 · Paso 04 · Navbar: logo, links y bolsa a la derecha -->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Maison Luz</title>
+  <style>
+    :root {
+      --crema: #f6f1ea;
+      --negro: #161412;
+      --rubor: #e8c4b8;
+    }
+    body {
+      margin: 0;
+      background: var(--crema);
+      color: var(--negro);
+      font-family: Helvetica, Arial, sans-serif;
+    }
+    h1, h3, h4 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: normal;   /* la serif da el toque editorial */
+    }
+
+    .navbar {
+      position: sticky;      /* se queda pegado arriba */
+      top: 0;
+      display: flex;         /* todo en una fila */
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      background: var(--negro);
+    }
+
+    /* ▼▼▼ NUEVO ▼▼▼ */
+    .navbar a {
+      color: var(--crema);
+      text-decoration: none;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      white-space: nowrap;   /* que no se parta en 2 líneas */
+    }
+    .navbar .logo {
+      font-family: Georgia, serif;
+      font-size: 16px;
+      letter-spacing: .2em;
+    }
+    .navbar .btn {
+      margin-left: auto;     /* lo empuja a la derecha */
+      background: var(--rubor);
+      color: var(--negro);
+      padding: 8px 16px;
+      border-radius: 999px;
+    }
+    /* ▲▲▲ fin de lo nuevo ▲▲▲ */
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="#" class="logo">MAISON LUZ</a>
+    <a href="#nuevo">Nuevo</a>
+    <a href="#coleccion">Colección</a>
+    <a href="#club">Club</a>
+    <a href="#bolsa" class="btn">Bolsa (0)</a>
+  </nav>
+
+  <script>
+    /* el JavaScript va aquí, hasta abajo */
+  </script>
+</body>
+</html>

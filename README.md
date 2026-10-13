@@ -110,6 +110,18 @@ Las direcciones de arte, paletas y tipografías de la biblioteca son **opciones 
 
 Parte del material adapta trabajo de terceros bajo sus propias licencias: ver [`plugins/dev-team/THIRD-PARTY-NOTICES.md`](plugins/dev-team/THIRD-PARTY-NOTICES.md). El contenido original es de AlgoLab; ver [`NOTICE.md`](NOTICE.md) (todos los derechos reservados sobre el contenido original; aún no se otorga una licencia de código abierto).
 
+## Material de clase
+
+Presentaciones y código de la Clase 1 (ábrelas en el navegador; flechas ← → para avanzar, `N` muestra las notas):
+
+| Archivo | Qué es |
+|---|---|
+| [`clases/01-anatomia-web.html`](clases/01-anatomia-web.html) | Anatomía de una página web: HTML, CSS, JS, secciones y vocabulario |
+| [`clases/01b-desarrollo-web-agentico.html`](clases/01b-desarrollo-web-agentico.html) | Desarrollo web agéntico: agentes, skills, fuentes, herramientas y galerías |
+| [`clases/01-codigo/`](clases/01-codigo/) | Código paso a paso de la clase (13 versiones de una landing de ejemplo) |
+
+Para verlas: clona el repo (o descarga el archivo en "Raw") y ábrelas con doble clic.
+
 ## Qué sigue
 
 Este plugin funciona por sí solo. Si además instalas la oficina virtual **AgentOS** (equipos, tareas, entregables y archivos en la web), los agentes la detectan automáticamente.

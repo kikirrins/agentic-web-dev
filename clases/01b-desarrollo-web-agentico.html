@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Desarrollo web agéntico</title>
+<style>
+
+:root{
+  --paper:#faf9f6; --card:#ffffff; --ink:#0a0a0a; --ink-soft:#45443f;
+  --line:#0a0a0a; --shadow:#000000; --hairline:#e4e2db;
+  --prog:#5c0f8b; --game:#ffdc32; --robo:#00ccbe; --design:#0055b8;
+  --content:#ff6b35; --ai:#0a0a2e;
+  --sans:'Helvetica Neue',Arial,system-ui,sans-serif;
+  --display:'Arial Black','Helvetica Neue',Arial,sans-serif;
+  --mono:ui-monospace,'SF Mono','SFMono-Regular',Menlo,Consolas,monospace;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:var(--paper); color:var(--ink); font-family:var(--sans);
+  font-size:clamp(14px,1.2vw,18px); line-height:1.5;
+  -webkit-font-smoothing:antialiased; overflow:hidden;
+}
+
+/* ---------- deck shell ---------- */
+.deck{height:100vh;width:100vw;position:relative}
+.slide{
+  position:absolute; inset:0; display:none;
+  padding:clamp(20px,3.2vh,40px) clamp(24px,3.6vw,66px) clamp(72px,8.2vh,90px);
+  overflow:auto;
+}
+.slide.on{display:flex; flex-direction:column; animation:in .22s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.eyebrow{
+  font-family:var(--mono); text-transform:uppercase; letter-spacing:.18em;
+  font-size:clamp(10px,.82vw,13px); font-weight:700; color:var(--ink-soft);
+}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(2.2rem,6.2vw,4.8rem);
+   line-height:.96;letter-spacing:-.025em;margin:.25em 0 .3em;text-wrap:balance}
+h2{font-family:var(--display);font-weight:900;font-size:clamp(1.45rem,3.1vw,2.5rem);
+   line-height:1;letter-spacing:-.02em;margin:.1em 0 .3em;text-wrap:balance}
+h3{font-family:var(--display);font-weight:900;font-size:clamp(1rem,1.6vw,1.35rem);margin:0 0 .5em}
+p{margin:0 0 .7em;max-width:62ch}
+.lede{font-size:clamp(.95rem,1.4vw,1.2rem);color:var(--ink-soft);max-width:54ch}
+.mono{font-family:var(--mono)}
+strong{font-weight:800}
+
+.tag{
+  display:inline-block; align-self:flex-start; font-family:var(--mono);
+  font-size:clamp(10px,.8vw,12px); text-transform:uppercase; letter-spacing:.14em;
+  font-weight:700; background:var(--ink); color:var(--game); padding:6px 12px;
+  border:2px solid var(--ink); border-radius:8px;
+}
+.chiprow{display:flex;align-self:flex-start;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{
+  font-family:var(--mono); font-size:clamp(10px,.78vw,12px); text-transform:uppercase;
+  letter-spacing:.1em; font-weight:700; background:var(--card); color:var(--ink);
+  border:2px solid var(--ink); border-radius:999px; padding:5px 13px;
+}
+.card{
+  background:var(--card); border:3px solid var(--ink); border-radius:var(--r);
+  box-shadow:6px 6px 0 var(--shadow); padding:clamp(14px,1.6vw,22px);
+}
+.callout{
+  background:var(--content); color:#0a0a0a; border:3px solid var(--ink);
+  border-radius:var(--r); box-shadow:7px 7px 0 var(--shadow);
+  padding:clamp(14px,1.7vw,24px);
+}
+.callout .eyebrow{color:#0a0a0a}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,1.8vw,26px);align-items:center;flex:1;min-height:0}
+.grid2.wide-code{grid-template-columns:.92fr 1.08fr}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,1.5vw,20px);align-content:center}
+@media (max-width:900px){.grid2,.grid2.wide-code,.grid3{grid-template-columns:1fr}}
+
+ul.clean{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+ul.clean li{padding-left:29px;position:relative}
+ul.clean li::before{
+  content:attr(data-n); position:absolute; left:0; top:.15em; width:20px;height:20px;
+  background:var(--ink); color:var(--game); border-radius:6px;
+  font-family:var(--mono); font-weight:700; font-size:11px; display:grid; place-items:center;
+}
+.callout ul.clean li::before{background:#0a0a0a;color:var(--content)}
+
+/* ---------- chrome ---------- */
+.bar{
+  position:fixed;left:0;right:0;bottom:0;height:clamp(46px,5.6vh,58px);
+  border-top:3px solid var(--ink);background:var(--card);
+  display:flex;align-items:center;gap:14px;padding:0 clamp(16px,3vw,38px);z-index:40;
+}
+.bar .logo{font-family:var(--display);font-weight:900;font-size:clamp(13px,1.05vw,16px);letter-spacing:-.02em}
+.bar .logo em{font-style:normal;background:var(--game);border:2px solid var(--ink);border-radius:6px;padding:1px 6px}
+.bar .now{font-family:var(--mono);font-size:clamp(9.5px,.8vw,12px);text-transform:uppercase;
+  letter-spacing:.12em;font-weight:700;color:var(--ink-soft);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .right{margin-left:auto;display:flex;align-items:center;gap:9px}
+.bar button{
+  font-family:var(--mono);font-weight:700;font-size:clamp(11px,.88vw,13px);
+  background:var(--card);border:2px solid var(--ink);border-radius:9px;padding:6px 12px;cursor:pointer;
+}
+.bar button:hover{background:var(--game)}
+.count{font-family:var(--mono);font-weight:700;font-size:clamp(11px,.88vw,14px);
+  background:var(--ink);color:var(--game);border-radius:8px;padding:5px 11px}
+.prog{position:fixed;left:0;bottom:clamp(46px,5.6vh,58px);height:5px;background:var(--content);z-index:41;transition:width .2s ease}
+
+
+/* ---------- extras clase 1b ---------- */
+body{font-size:clamp(16px,1.36vw,22px)}
+.slide{padding-bottom:clamp(76px,8.6vh,96px)}
+.eyebrow{font-size:clamp(15px,1.05vw,18px)}
+.tag{font-size:clamp(15px,1.05vw,17px)}
+.chip{font-size:clamp(15px,1.05vw,17px)}
+h2{margin-bottom:.2em}
+.lede{font-size:clamp(1rem,1.45vw,1.3rem);max-width:60ch}
+.small{font-size:clamp(15px,1.2vw,19px);color:var(--ink-soft)}
+.slide.on{justify-content:center}
+.slide.on .grid2{flex:none}
+h2{margin-bottom:.55em!important}
+.loopback{max-width:none!important}
+.flow .f{min-height:230px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.2vw,18px);align-content:center}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(10px,1.1vw,16px);align-content:start}
+.grid3>*,.grid4>*,.grid5>*{min-width:0}
+.grow{flex:1;min-height:0;display:grid;align-content:center}
+.card h3{margin-bottom:.3em}
+.card p{margin:0 0 .45em;max-width:none}
+.card.c1{background:#efe6ff}.card.c2{background:#fff3b0}.card.c3{background:#c9f5f1}.card.c4{background:#ffd9c7}.card.c5{background:#d4e4ff}.card.dark{background:var(--ai);color:#f3f1ea}
+.card.dark h3{color:var(--game)}
+.card.dark .eyebrow{color:var(--game)}
+.quote{font-family:var(--mono);font-size:clamp(14px,1.1vw,18px);line-height:1.4;background:#fff;border:2px dashed var(--ink);border-radius:10px;padding:10px 12px;font-weight:600;color:#1c1b22}
+.card .quote{margin-top:6px}
+.bignum{font-family:var(--display);font-size:clamp(3rem,7vw,6rem);line-height:.9;letter-spacing:-.03em}
+.pill{display:inline-block;font-family:var(--mono);font-weight:700;font-size:clamp(14px,1.05vw,17px);background:#fff;border:2px solid var(--ink);border-radius:999px;padding:3px 12px;margin:3px 4px 3px 0;white-space:nowrap}
+.pill.on{background:var(--game)}
+.pill.x{background:#ffd9d4;text-decoration:line-through}
+.stack{display:grid;gap:10px;align-content:start}
+.loop{display:grid;grid-template-columns:repeat(4,1fr);gap:0;align-items:stretch}
+.loop .st{border:3px solid var(--ink);background:var(--card);padding:16px 14px;text-align:center;position:relative;box-shadow:5px 5px 0 #000;margin-right:22px;border-radius:var(--r)}
+.loop .st:last-child{margin-right:0}
+.loop .st b{display:block;font-family:var(--display);font-size:1.5em;margin-bottom:2px}
+.loop .st:not(:last-child)::after{content:"→";position:absolute;right:-26px;top:50%;transform:translateY(-50%);font-weight:900;font-size:1.5em}
+.loop .st.me{background:var(--game)}.loop .st.ai{background:var(--robo)}
+.loopback{font-family:var(--mono);font-weight:700;text-align:center;font-size:clamp(14px,1.05vw,17px);margin:10px 0 0;color:var(--ink-soft)}
+.tree{font-family:var(--mono);font-size:clamp(15px,1.25vw,20px);line-height:1.55;background:#fff;border:3px solid var(--ink);border-radius:12px;box-shadow:5px 5px 0 #000;padding:16px 20px;white-space:pre}
+.tree .d{font-weight:800;color:var(--prog)}.tree .n{color:var(--ink-soft)}
+.org{display:flex;flex-direction:column;align-items:center;gap:0;flex:1;justify-content:center}
+.org .top{width:min(520px,60%)}
+.org .line{width:3px;height:22px;background:var(--ink)}
+.org .bar2{width:84%;height:3px;background:var(--ink)}
+.org .kids{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%}
+.org .kids .card{padding:12px}
+.org .kids h3{font-size:clamp(15px,1.15vw,19px);word-break:break-word}
+.flow{display:grid;grid-template-columns:repeat(9,1fr);gap:8px;align-items:stretch}
+.flow .f{border:3px solid var(--ink);border-radius:12px;background:#fff;padding:10px 6px;text-align:center;box-shadow:4px 4px 0 #000;display:flex;flex-direction:column;gap:4px;justify-content:flex-start;min-width:0}
+.flow .f .nm{font-family:var(--display);font-size:clamp(15px,1.1vw,18px);overflow-wrap:anywhere;line-height:1.05}
+.flow .f .who{font-family:var(--mono);font-size:clamp(14px,1vw,16px);font-weight:700;margin-top:auto;padding:4px 2px;border-radius:6px;background:var(--ink);color:var(--game);word-break:break-word}
+.flow .f.me{background:var(--game)}
+.flow .f.me .who{background:#fff;color:var(--ink);border:2px solid var(--ink)}
+.flow .f .sm{font-size:clamp(14px,1.05vw,17px);line-height:1.25;color:var(--ink-soft)}
+table.t{width:100%;border-collapse:separate;border-spacing:0 8px}
+table.t td{background:#fff;border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);padding:10px 14px;vertical-align:middle}
+table.t td:first-child{border-left:3px solid var(--ink);border-radius:12px 0 0 12px;font-family:var(--display);font-weight:900;white-space:nowrap}
+table.t td:last-child{border-right:3px solid var(--ink);border-radius:0 12px 12px 0;white-space:nowrap;font-weight:700}
+.free{background:var(--robo)!important}.paid{background:#ffd9c7!important}.maybe{background:var(--game)!important}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,1.8vw,26px)}
+.vs>*{min-width:0}
+ul.dots{margin:0;padding-left:1.1em;display:grid;gap:6px}
+ul.dots li{padding-left:2px}
+.notes{display:none}
+body.shownotes .slide.on .notes{display:block;position:fixed;left:clamp(16px,3vw,38px);right:clamp(16px,3vw,38px);bottom:calc(clamp(46px,5.6vh,58px) + 12px);background:#0a0a2e;color:#fff;border:3px solid var(--game);border-radius:12px;padding:12px 18px;font-size:clamp(16px,1.25vw,20px);line-height:1.35;z-index:60;max-height:34vh;overflow:auto}
+.notes b{color:var(--game);font-family:var(--mono);font-size:.8em;letter-spacing:.12em}
+.hint-n{font-family:var(--mono);font-size:13px;color:var(--ink-soft)}
+.tight p{margin-bottom:.4em}
+@media (max-width:900px){.grid4,.grid5,.flow,.loop,.vs{grid-template-columns:1fr 1fr}.org .kids{grid-template-columns:1fr 1fr}.loop .st::after{display:none}}
+</style>
+<style>/* slide 26: timeline rows */.tl-row{display:flex;gap:28px;align-items:baseline;padding:10px 0}.tl-row .t{min-width:140px;font-weight:800}.tl-row .what{display:block;font-size:1.25em}.tl-row .what small{display:block;margin-top:4px;font-size:.72em;opacity:.8}</style>
+<style>a.src{color:inherit;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}a.src::after{content:" ↗";font-size:.7em;opacity:.7}a.src:hover{background:#ffd93b}</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- 1 -->
+<section class="slide" data-note="Portada · 1 min" style="justify-content:center">
+  <span class="tag">Clase 1 · parte 2</span>
+  <h1>Desarrollo<br>web agéntico</h1>
+  <p class="lede">Ya sabes cómo se llaman las piezas de una página. Hoy conoces al <strong>equipo de agentes</strong> que las construye, y cuál es tu trabajo como directora.</p>
+  <div class="chiprow"><span class="chip">Agentes</span><span class="chip">Skills</span><span class="chip">Herramientas</span><span class="chip">Flujo de trabajo</span></div>
+  <aside class="notes"><b>NOTAS</b> Bienvenida corta. Esta es la parte 2 de la clase 1: la parte 1 fue anatomía. Hoy casi no se teclea: se entiende el mapa y se ve una demo. Pulsa N para ocultar estas notas.</aside>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-note="Dónde estamos · 2 min">
+  <span class="eyebrow">Dónde estamos</span>
+  <h2>Ya conoces las cinco piezas</h2>
+  <div class="grid5" style="margin:10px 0 18px">
+    <div class="card" style="background:var(--prog);color:#fff"><h3>Navbar</h3><p>A dónde voy</p></div>
+    <div class="card c2"><h3>Hero</h3><p>La colección</p></div>
+    <div class="card c3"><h3>Cards</h3><p>Los productos</p></div>
+    <div class="card c4"><h3>Modal</h3><p>La oferta</p></div>
+    <div class="card" style="background:var(--design);color:#fff"><h3>Footer</h3><p>Envíos y redes</p></div>
+  </div>
+  <div class="grid2" style="flex:none;align-items:stretch">
+    <div class="card"><span class="eyebrow">Antes</span><p class="lede" style="margin:6px 0 0">Tú escribías el HTML y el CSS pieza por pieza, para entender cómo funciona.</p></div>
+    <div class="callout"><span class="eyebrow">Hoy</span><p class="lede" style="margin:6px 0 0;color:#0a0a0a">Conocemos al <strong>equipo</strong> que construye esas piezas por ti, y lo que tú sí decides.</p></div>
+  </div>
+  <aside class="notes"><b>NOTAS</b> Que repitan las cinco piezas de memoria. Puente: ahora que saben pedirlas por su nombre, pueden dirigir a alguien que las construya.</aside>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-note="Qué cambia · 4 min">
+  <span class="eyebrow">Qué cambia con agentes</span>
+  <h2>Tú diriges. Los agentes construyen. Tú apruebas.</h2>
+  <div class="loop" style="margin:12px 0 0">
+    <div class="st me"><b>Pedir</b><span class="small" style="color:#0a0a0a">Dices qué quieres, con nombres</span></div>
+    <div class="st ai"><b>Revisar</b><span class="small" style="color:#0a0a0a">Ves lo que hizo el agente</span></div>
+    <div class="st me"><b>Corregir</b><span class="small" style="color:#0a0a0a">"Más aire, otro color"</span></div>
+    <div class="st ai"><b>Aprobar</b><span class="small" style="color:#0a0a0a">Solo tú dices "listo"</span></div>
+  </div>
+  <p class="loopback">↺ y se repite hasta que te guste</p>
+  <div class="grid2" style="margin-top:14px;flex:none;align-items:stretch">
+    <div class="card"><h3>Un agente sí hace</h3><ul class="dots"><li>Escribe y edita código</li><li>Abre la página y le toma capturas</li><li>Te propone opciones y te explica</li></ul></div>
+    <div class="callout"><h3>Un agente nunca hace sin ti</h3><ul class="dots" style="color:#0a0a0a"><li><strong>Publicar</strong> la página</li><li><strong>Cobrar</strong> dinero a nadie</li><li><strong>Tocar cuentas reales</strong> (tienda, pagos, dominio)</li></ul></div>
+  </div>
+  <aside class="notes"><b>NOTAS</b> Idea central de la clase. Pedir, revisar, corregir, aprobar es un ciclo, no una línea recta. Lo que no se delega: publicar, cobrar, cuentas reales. Eso lo ejecuta la persona.</aside>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-note="Claude con un repo · 4 min">
+  <span class="eyebrow">¿Qué es "Claude entrenado con un repo"?</span>
+  <h2>No lo re-entrenamos: le damos un manual</h2>
+  <div class="grid2" style="align-items:center">
+    <div>
+      <p class="lede">El modelo es el mismo Claude de siempre. Lo que cambia es lo que <strong>carga en su memoria de trabajo</strong> al empezar:</p>
+      <ul class="clean">
+        <li data-n="1"><strong>Agentes</strong>: quién es y qué hace cada especialista</li>
+        <li data-n="2"><strong>Skills</strong>: recetas paso a paso para tareas concretas</li>
+        <li data-n="3"><strong>MCP</strong>: herramientas que puede usar, como un navegador real</li>
+      </ul>
+      <p class="small" style="margin-top:12px">Son archivos de texto. Se pueden leer, corregir y mejorar, como cualquier documento.</p>
+    </div>
+    <div class="tree"><span class="d">dev-team/</span>
+├─ <span class="d">agents/</span>        <span class="n">6 especialistas</span>
+│   ├─ tech-lead.md
+│   └─ ...
+├─ <span class="d">skills/</span>        <span class="n">30 recetas</span>
+│   ├─ art-direction/
+│   └─ ...
+├─ .mcp.json       <span class="n">herramientas</span>
+└─ THIRD-PARTY-NOTICES.md</div>
+  </div>
+  <aside class="notes"><b>NOTAS</b> Sé honesto: no es entrenamiento, es contexto. Analogía: un nuevo empleado brillante al que le entregas el manual de la casa. Es un plugin de Claude: una carpeta que se instala.</aside>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-note="El equipo · 3 min">
+  <span class="eyebrow">Los agentes · el equipo</span>
+  <h2>Seis especialistas, un solo punto de entrada</h2>
+  <div class="org">
+    <div class="card top c2" style="text-align:center"><h3 class="mono" style="margin:0">tech-lead</h3><p style="margin:0">Tú le hablas a este. Entiende, reparte y revisa.</p></div>
+    <div class="line"></div><div class="bar2"></div>
+    <div class="kids" style="margin-top:0">
+      <div class="card c1"><h3 class="mono">frontend-designer</h3><p class="small">Cómo se ve</p></div>
+      <div class="card c3"><h3 class="mono">frontend-engineer</h3><p class="small">Construye la interfaz</p></div>
+      <div class="card c5"><h3 class="mono">backend-engineer</h3><p class="small">Datos, formularios, pagos</p></div>
+      <div class="card c4"><h3 class="mono">web-qa</h3><p class="small">Revisa, no arregla</p></div>
+      <div class="card c2"><h3 class="mono">shopify-developer</h3><p class="small">Si la tienda es Shopify</p></div>
+    </div>
+  </div>
+  <p class="small" style="margin:12px 0 0">No tienes que acordarte de los seis: <strong>empiezas siempre con el tech-lead</strong>.</p>
+  <aside class="notes"><b>NOTAS</b> El tech-lead es la puerta de entrada. El shopify-developer es solo para tiendas en Shopify, nunca para la tienda propia con Next.js.</aside>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-note="Agentes 1-2 · 3 min">
+  <span class="eyebrow">Los agentes · 1 y 2</span>
+  <h2>Quien dirige y quien diseña</h2>
+  <div class="grid2" style="align-items:stretch">
+    <div class="card c2"><h3 class="mono">tech-lead</h3>
+      <p><strong>Qué hace:</strong> entiende tu pedido, lo divide en tareas, se las pasa al diseñador, a los ingenieros y a QA, y revisa antes de entregarte.</p>
+      <p><strong>Cuándo:</strong> cualquier pedido de sitio o tienda: nuevo, rediseño o arreglo.</p>
+      <div class="quote">"Quiero una landing para mi colección Otoño 2026 con hero, productos y un modal del club."</div></div>
+    <div class="card c1"><h3 class="mono">frontend-designer</h3>
+      <p><strong>Qué hace:</strong> define la dirección visual: tipografía, color, espacios, jerarquía, movimiento sutil. Evita el look genérico de "plantilla de IA". También critica un diseño existente.</p>
+      <p><strong>Cuándo:</strong> al empezar, o cuando algo "no se siente de marca".</p>
+      <div class="quote">"Dame 3 direcciones visuales para mi marca a partir de mi logo y mis fotos de campaña."</div></div>
+  </div>
+  <aside class="notes"><b>NOTAS</b> Los prompts son ejemplos para copiar. El diseñador usa el modelo más fuerte (opus), igual que el tech-lead, porque son decisiones de criterio.</aside>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-note="Agentes 3-4 · 3 min">
+  <span class="eyebrow">Los agentes · 3 y 4</span>
+  <h2>Quien construye lo que ves y lo que no ves</h2>
+  <div class="grid2" style="align-items:stretch">
+    <div class="card c3"><h3 class="mono">frontend-engineer</h3>
+      <p><strong>Qué hace:</strong> convierte la dirección visual en páginas y componentes con Next.js, React, Tailwind y shadcn/ui, con animación discreta y accesible.</p>
+      <p><strong>Cuándo:</strong> páginas, carrito, formularios, y para aplicar las correcciones de QA.</p>
+      <div class="quote">"Construye el hero con la dirección que elegimos, que se vea bien en celular."</div></div>
+    <div class="card c5"><h3 class="mono">backend-engineer</h3>
+      <p><strong>Qué hace:</strong> lo que hace funcionar lo que el sitio promete: guardar datos, validar, recibir formularios, cobrar con Stripe.</p>
+      <p><strong>Cuándo:</strong> el sitio guarda información, cobra o recibe formularios.</p>
+      <div class="quote">"Haz que el correo del modal del club se guarde y valida que sea un correo real."</div></div>
+  </div>
+  <aside class="notes"><b>NOTAS</b> Front es lo visible, back es lo invisible. Explica "backend" con el ejemplo de la lista de correos del club.</aside>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-note="Agentes 5-6 · 3 min">
+  <span class="eyebrow">Los agentes · 5 y 6</span>
+  <h2>Quien revisa y el especialista en Shopify</h2>
+  <div class="grid2" style="align-items:stretch">
+    <div class="card c4"><h3 class="mono">web-qa</h3>
+      <p><strong>Qué hace:</strong> revisa un sitio ya construido: accesibilidad, rapidez, celular y ligas rotas, con evidencia medida. <strong>No arregla: reporta.</strong></p>
+      <p><strong>Cuándo:</strong> antes de entregar o publicar, y tras cada ronda de correcciones.</p>
+      <div class="quote">"Revisa la landing en celular y en escritorio y mándame capturas de lo que está mal."</div></div>
+    <div class="card c2"><h3 class="mono">shopify-developer</h3>
+      <p><strong>Qué hace:</strong> temas en Liquid, scripts con las APIs de Shopify, y configura la tienda contigo. <strong>Solo</strong> si la tienda vive en Shopify.</p>
+      <p><strong>Cuándo:</strong> tema, catálogo, automatizaciones, operación diaria.</p>
+      <div class="quote">"Prepara el tema de mi marca en una tienda de desarrollo, sin tocar la tienda real."</div></div>
+  </div>
+  <aside class="notes"><b>NOTAS</b> QA separado de quien construye: quien construye no se califica a sí mismo. Shopify lo decidimos en la sesión 3.</aside>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-note="Qué es un skill · 3 min">
+  <span class="eyebrow">Skills</span>
+  <h2>Un skill es una receta</h2>
+  <div class="grid2" style="align-items:stretch">
+    <div class="stack">
+      <p class="lede">Un agente sabe <em>quién es</em>. Un skill le dice <strong>cómo hacer una tarea concreta</strong>, igual que una receta de cocina.</p>
+      <div class="card c3"><h3>Pasos</h3><p>Qué hacer primero, qué después.</p></div>
+      <div class="card c2"><h3>Resultados</h3><p>Qué entrega al terminar: un reporte, un archivo, capturas.</p></div>
+      <div class="callout"><h3 style="margin:0">Y reglas de "nunca"</h3><p style="margin:0;color:#0a0a0a">Por ejemplo: nunca declares "listo" sin evidencia.</p></div>
+    </div>
+    <div class="card dark" style="align-self:center"><span class="eyebrow">Ejemplo real · skill "verification"</span>
+      <h3 style="margin-top:8px">Antes de decir "listo"</h3>
+      <ul class="dots"><li>Relee lo que se pidió</li><li>Corre las pruebas y el build, de nuevo</li><li>Llena un bloque de evidencia</li></ul>
+      <p style="margin-top:10px;color:var(--game)"><strong>Nunca</strong> dice "ya quedó" sin haberlo comprobado.</p></div>
+  </div>
+  <aside class="notes"><b>NOTAS</b> Cada skill vive en su carpeta con un archivo SKILL.md. El agente lo carga solo cuando lo necesita. Son 30 en total.</aside>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-note="Skills A · 3 min">
+  <span class="eyebrow">Los 30 skills · parte 1</span>
+  <h2>Diseño, construcción y lanzamiento</h2>
+  <div class="grid3" style="align-items:start">
+    <div class="card c1"><h3>Diseño · 7</h3>
+      <span class="pill">frontend-design</span><span class="pill">art-direction</span><span class="pill">design-references</span><span class="pill">design-critique</span><span class="pill">modern-ui</span><span class="pill">animation-craft</span><span class="pill">break-ui</span></div>
+    <div class="card c3"><h3>Construir · 6</h3>
+      <span class="pill">bootstrap-nextjs-site</span><span class="pill">bootstrap-ecommerce</span><span class="pill">build-static-page</span><span class="pill">component-sourcing</span><span class="pill">api-and-database</span><span class="pill">stripe-payments</span></div>
+    <div class="card c4"><h3>Lanzar · 2</h3>
+      <span class="pill">seo-and-metadata</span><span class="pill">deploy-vercel</span>
+      <p class="small" style="margin-top:10px">SEO: que Google y WhatsApp muestren bien tu liga. Deploy: dejar la página en internet.</p></div>
+  </div>
+  <p class="small" style="margin-top:14px">Hoy no los memorizas. Solo ten claro que <strong>existen</strong> y que el tech-lead sabe cuál usar.</p>
+  <aside class="notes"><b>NOTAS</b> Señala dos o tres: art-direction (las 3 direcciones) y break-ui (prueba con nombres larguísimos, productos agotados). No leas la lista completa.</aside>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-note="Skills B · 3 min">
+  <span class="eyebrow">Los 30 skills · parte 2</span>
+  <h2>Shopify y control de calidad</h2>
+  <div class="grid2" style="align-items:start">
+    <div class="card c2"><h3>Shopify · 6</h3>
+      <span class="pill">shopify-choose-approach</span><span class="pill">shopify-store-setup</span><span class="pill">shopify-liquid-theme</span><span class="pill">shopify-headless-storefront</span><span class="pill">shopify-admin-api-automation</span><span class="pill">shopify-store-operations</span></div>
+    <div class="card c5"><h3>Calidad · 9</h3>
+      <span class="pill">visual-verification</span><span class="pill">audit-accessibility</span><span class="pill">audit-performance</span><span class="pill">code-review</span><span class="pill">launch-checklist</span><span class="pill">verification</span><span class="pill">scope-discipline</span><span class="pill">target-file-verification</span><span class="pill">env-loader-check</span></div>
+  </div>
+  <p class="small" style="margin-top:14px"><strong>Calidad es casi un tercio</strong> de las recetas: el agente que construye también tiene que demostrar que funciona.</p>
+  <aside class="notes"><b>NOTAS</b> scope-discipline = hacer el cambio más pequeño posible. target-file-verification = confirmar que edita el archivo que de verdad pinta la pantalla. Suman 30: 7+6+2+6+9.</aside>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-note="Origen de skills 1 · 3 min">
+  <span class="eyebrow">De dónde vienen los skills · 1 de 2</span>
+  <h2>Lo que tomamos de otros, con licencia</h2>
+  <div class="grid3" style="align-items:stretch">
+    <div class="card c1"><h3><a class="src" href="https://github.com/Leonxlnx/taste-skill" target="_blank" rel="noopener noreferrer">Taste Skill</a></h3><span class="pill on">MIT</span>
+      <p style="margin-top:8px">Tomamos: 20 direcciones de arte, 56 paletas y 44 sistemas de tipografía, como tablas.</p><p class="small">Dejamos fuera: sus scripts y reglas de estilo obligatorias.</p></div>
+    <div class="card c3"><h3><a class="src" href="https://github.com/emilkowalski/skills" target="_blank" rel="noopener noreferrer">Emil Kowalski</a></h3><span class="pill on">MIT</span>
+      <p style="margin-top:8px">Tomamos: recetas de animación con números exactos y el catálogo de pruebas con datos extremos (break-ui).</p><p class="small">Dejamos fuera: sus flujos de conversación.</p></div>
+    <div class="card c2"><h3><a class="src" href="https://github.com/pbakaus/impeccable" target="_blank" rel="noopener noreferrer">Impeccable</a></h3><span class="pill on">Apache-2.0</span>
+      <p style="margin-top:8px">Solo su <strong>texto de referencia</strong>, condensado en nuestro skill de crítica de diseño.</p><p class="small"><strong>No</strong> instalamos su plugin: trae un programa que se descarga y corre solo.</p></div>
+  </div>
+  <p class="small" style="margin-top:14px">Los tres con atribución y fecha de la versión revisada en <span class="mono">THIRD-PARTY-NOTICES.md</span>.</p>
+  <aside class="notes"><b>NOTAS</b> Idea: tomar prestado está bien si es legal y se cita. Fijamos la versión exacta (commit), nunca "la última".</aside>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-note="Origen de skills 2 · 4 min">
+  <span class="eyebrow">De dónde vienen los skills · 2 de 2</span>
+  <h2>Propios y oficiales</h2>
+  <div class="grid2" style="align-items:stretch">
+    <div class="card c3"><h3>Nuestros · <a class="src" href="https://github.com/kikirrins/agentic-web-dev" target="_blank" rel="noopener noreferrer">repo del equipo</a></h3><ul class="dots"><li>Prácticas de nuestro proyecto anterior (verificación, disciplina de alcance)</li><li>Reescrituras propias: diseño, páginas, QA, lanzamiento</li></ul></div>
+    <div class="card c5"><h3>Documentación oficial</h3><ul class="dots"><li><a class="src" href="https://shopify.dev" target="_blank" rel="noopener noreferrer">Shopify (shopify.dev)</a></li><li><a class="src" href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener noreferrer">Playwright MCP</a>, Apache-2.0</li><li><a class="src" href="https://code.claude.com/docs" target="_blank" rel="noopener noreferrer">Documentación de Anthropic</a></li></ul></div>
+  </div>
+  <div class="callout" style="margin-top:14px"><strong>Honestidad:</strong> todo lo de terceros se revisa antes de usarse (seguridad), y se guarda su atribución.</div>
+  <aside class="notes"><b>NOTAS</b> Punto de seguridad: un skill es texto que el agente obedece. Uno malicioso podría darle instrucciones peligrosas. Por eso lo leemos entero antes de instalarlo.</aside>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-note="Caja de herramientas: Claude · 3 min">
+  <span class="eyebrow">La caja de herramientas · 1</span>
+  <h2>Claude Code y Claude Desktop</h2>
+  <table class="t">
+    <tr><td>Qué es</td><td style="white-space:normal;font-weight:500"><a class="src" href="https://code.claude.com/docs" target="_blank" rel="noopener noreferrer">Claude Code</a> es el agente que escribe y edita archivos de tu proyecto. Claude Desktop es la app de escritorio. Ambos cargan <strong>plugins</strong>: nuestra carpeta dev-team.</td><td class="free">Ya lo tienes</td></tr>
+    <tr><td>Lo usamos para</td><td style="white-space:normal;font-weight:500">Hablar con el tech-lead y que el equipo trabaje en tu proyecto.</td><td class="free">Tu suscripción de Claude</td></tr>
+    <tr><td>Plugins</td><td style="white-space:normal;font-weight:500">Un plugin empaqueta agentes, skills y herramientas. Se instala desde un catálogo (marketplace).</td><td class="maybe">Verifica el plan vigente</td></tr>
+  </table>
+  <aside class="notes"><b>NOTAS</b> Pide que tengan una suscripción de Claude. No prometas límites de uso; si pregunta, que revise su plan vigente.</aside>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-note="MCP · 4 min">
+  <span class="eyebrow">La caja de herramientas · 2</span>
+  <h2>MCP: darle manos al agente</h2>
+  <div class="grid2" style="align-items:stretch">
+    <div class="card c3"><h3><a class="src" href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener noreferrer">Playwright MCP</a></h3>
+      <p><strong>Qué es:</strong> el agente abre un navegador real, entra a tu página, toma capturas y prueba.</p>
+      <p><strong>Lo usamos para:</strong> ver la página en celular y escritorio y encontrar errores.</p>
+      <p><strong>Seguridad:</strong> corre sin ventana y restringido; no puede ejecutar código libre ni subir archivos.</p>
+      <span class="pill on">Gratis · Apache-2.0</span></div>
+    <div class="card c1"><h3><a class="src" href="https://help.figma.com/hc/en-us/articles/32132100833559" target="_blank" rel="noopener noreferrer">Figma MCP</a> <span class="pill">opcional</span></h3>
+      <p><strong>Qué es:</strong> el agente lee tus archivos de Figma para tomar colores, tipografía y medidas.</p>
+      <p><strong>Ojo:</strong> los asientos View/Collab y el plan Starter tienen un tope muy bajo (unas 6 lecturas al mes). Pregunta qué asiento tienes.</p>
+      <p><strong>Plan B:</strong> exportas los frames tú.</p>
+      <span class="pill maybe on">Verifica tu plan vigente</span></div>
+  </div>
+  <aside class="notes"><b>NOTAS</b> MCP = un enchufe estándar para conectar herramientas al agente. Datos de Figma son de nuestra auditoría; no los verifiqué en la página oficial de Figma, que lo confirme con su asiento.</aside>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-note="Claude Design y Higgsfield · 3 min">
+  <span class="eyebrow">La caja de herramientas · 3</span>
+  <h2>Antes del código: prototipo e imágenes</h2>
+  <div class="grid2" style="align-items:stretch">
+    <div class="card c2"><h3><a class="src" href="https://claude.ai/design" target="_blank" rel="noopener noreferrer">Claude Design</a></h3><p class="small" style="margin-top:-4px">claude.ai/design · vista previa de investigación</p>
+      <p><strong>Qué es:</strong> crea prototipos interactivos y entrega un paquete para pasarle a Claude Code.</p>
+      <p><strong>Lo usamos como:</strong> el paso de dirección: ves una maqueta y reaccionas.</p>
+      <p><strong>Ojo:</strong> es una referencia: la reconstruimos en Next.js, no se publica tal cual.</p>
+      <span class="pill maybe on">Requiere suscripción de paga (la que ya tienes)</span></div>
+    <div class="card c4"><h3><a class="src" href="https://higgsfield.ai" target="_blank" rel="noopener noreferrer">Higgsfield</a></h3>
+      <p><strong>Qué es:</strong> generación de imágenes y video con IA.</p>
+      <p><strong>Lo usamos para:</strong> fotos de campaña y videos cortos del hero.</p>
+      <p><strong>Ojo:</strong> las imágenes generadas se marcan como tales; nunca inventamos fotos de productos que no existen.</p>
+      <span class="pill on">Ya lo tienes</span></div>
+  </div>
+  <aside class="notes"><b>NOTAS</b> Claude Design: el dato del plan viene de nuestra auditoría (fuentes secundarias). Higgsfield: descripción general, sin precios.</aside>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-note="Librerías · 3 min">
+  <span class="eyebrow">La caja de herramientas · 4 · librerías</span>
+  <h2>Piezas ya hechas para no empezar de cero</h2>
+  <div class="grid3" style="align-items:stretch">
+    <div class="card c3"><h3><a class="src" href="https://tailwindcss.com" target="_blank" rel="noopener noreferrer">Tailwind CSS</a></h3><p>Escribes el estilo con clases cortas en el mismo HTML, en vez de un archivo CSS aparte.</p><p class="small">Es el "CSS" de la clase anterior, más rápido.</p></div>
+    <div class="card c1"><h3><a class="src" href="https://ui.shadcn.com" target="_blank" rel="noopener noreferrer">shadcn/ui</a></h3><p>Botones, modales y formularios ya hechos, que <strong>copias a tu proyecto</strong> y son tuyos para cambiar.</p><p class="small">Tu navbar y tu modal, pero pulidos.</p></div>
+    <div class="card c2"><h3><a class="src" href="https://lucide.dev" target="_blank" rel="noopener noreferrer">Lucide</a></h3><p>Una colección de iconos: bolsa, corazón, lupa, flechas.</p><p class="small">Todos con el mismo estilo.</p></div>
+  </div>
+  <p class="small" style="margin-top:14px">Los tres se usan <strong>por proyecto</strong>: si tu marca pide otra cosa, tu marca gana.</p>
+  <aside class="notes"><b>NOTAS</b> No profundices en instalación. Son opciones, no una casa de estilo obligatoria. Licencias: no las verifiqué online, el agente las revisa al usarlas.</aside>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-note="Animación · 3 min">
+  <span class="eyebrow">La caja de herramientas · 5 · movimiento</span>
+  <h2>Dos librerías de animación: ¿cuál cuándo?</h2>
+  <div class="grid2" style="align-items:stretch">
+    <div class="card c3"><h3><a class="src" href="https://motion.dev" target="_blank" rel="noopener noreferrer">motion</a></h3><span class="pill on">Gratis · MIT</span>
+      <p style="margin-top:8px"><strong>Para:</strong> animar la interfaz en React: que un modal aparezca suave, que una tarjeta responda al pasar el mouse, que el carrito se deslice.</p>
+      <p class="small">Es la que usamos por defecto.</p></div>
+    <div class="card c2"><h3><a class="src" href="https://gsap.com" target="_blank" rel="noopener noreferrer">GSAP</a></h3><span class="pill on">Gratis (según gsap.com)</span>
+      <p style="margin-top:8px"><strong>Para:</strong> escenas más largas: animación ligada al scroll, secuencias coreografiadas, una portada que cuenta una historia.</p>
+      <p class="small">Solo si la página lo pide. Verifica sus términos vigentes.</p></div>
+  </div>
+  <div class="callout" style="margin-top:14px"><strong>Regla del equipo:</strong> un momento animado memorable por página, y respeta a quien pide menos movimiento.</div>
+  <aside class="notes"><b>NOTAS</b> Verificado en motion.dev: gratis, MIT, open source. Verificado en gsap.com: "ahora gratis para todos"; no cita términos de licencia, por eso decimos "verifica".</aside>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-note="Next, Vercel, Stripe · 3 min">
+  <span class="eyebrow">La caja de herramientas · 6 · del código a internet</span>
+  <h2>Next.js, Vercel y Stripe</h2>
+  <div class="grid3" style="align-items:stretch">
+    <div class="card c5"><h3><a class="src" href="https://nextjs.org" target="_blank" rel="noopener noreferrer">Next.js</a></h3><p><strong>El framework</strong> sobre React: da estructura a tu sitio (páginas, rutas, formularios).</p><p class="small">Es el esqueleto donde van tus componentes.</p></div>
+    <div class="card c3"><h3><a class="src" href="https://vercel.com" target="_blank" rel="noopener noreferrer">Vercel</a></h3><p><strong>Donde se publica.</strong> Conecta tu código y lo deja en una liga pública.</p><p class="small">El deploy lo ejecutas <strong>tú</strong>; el agente solo deja los pasos.</p></div>
+    <div class="card c4"><h3><a class="src" href="https://stripe.com" target="_blank" rel="noopener noreferrer">Stripe</a></h3><p><strong>Cobros con tarjeta.</strong> Aprendemos en <strong>modo de prueba</strong>: tarjetas falsas, dinero falso.</p><p class="small">Cobrar de verdad es decisión tuya.</p></div>
+  </div>
+  <p class="small" style="margin-top:14px">Planes y precios: <strong>verifica el plan vigente</strong> de cada uno antes de contratar.</p>
+  <aside class="notes"><b>NOTAS</b> No dar precios. Modo de prueba de Stripe: se usa con tarjetas de prueba, sin movimiento de dinero real.</aside>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-note="Galerías · 3 min">
+  <span class="eyebrow">La caja de herramientas · 7 · inspiración</span>
+  <h2>Galerías y referencias: mirar, no copiar</h2>
+  <table class="t">
+    <tr><td><a class="src" href="https://21st.dev" target="_blank" rel="noopener noreferrer">21st.dev</a></td><td style="white-space:normal;font-weight:500">Componentes de la comunidad en formato shadcn. Cada uno se revisa antes de usarse.</td><td class="maybe">Gratis: 2 copias al día</td></tr>
+    <tr><td><a class="src" href="https://styles.refero.design" target="_blank" rel="noopener noreferrer">Refero</a></td><td style="white-space:normal;font-weight:500">Guías DESIGN.md de marcas reales. Inspiración, nunca copia de otra marca. Su MCP es de paga.</td><td class="paid">MCP de paga</td></tr>
+    <tr><td><a class="src" href="https://github.com/Leonxlnx/taste-skill" target="_blank" rel="noopener noreferrer">Taste Skill</a></td><td style="white-space:normal;font-weight:500">Direcciones de arte, paletas y sistemas de tipografía ya clasificados, dentro de nuestro skill.</td><td class="free">Incluido</td></tr>
+    <tr><td><a class="src" href="https://fonts.google.com" target="_blank" rel="noopener noreferrer">Google Fonts</a></td><td style="white-space:normal;font-weight:500">Fuentes tipográficas para elegir y probar.</td><td class="maybe">Verifica términos</td></tr>
+  </table>
+  <aside class="notes"><b>NOTAS</b> El límite de 21st.dev (2 copias/día en plan gratis) viene de nuestra auditoría; sus licencias de componentes no están publicadas, por eso revisamos cada uno. Refero: no clonar el estilo de una marca.</aside>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-note="Shopify vs propia · 4 min">
+  <span class="eyebrow">La decisión grande · sesión 3</span>
+  <h2>Shopify o tienda propia en Next.js</h2>
+  <div class="grid2" style="align-items:stretch">
+    <div class="card c2"><h3><a class="src" href="https://shopify.dev" target="_blank" rel="noopener noreferrer">Shopify</a></h3>
+      <ul class="dots"><li>Temas en <strong>Liquid</strong>, o tienda "headless" con Storefront API (Hydrogen/Oxygen es la opción oficial de Shopify)</li><li>API Admin para automatizar catálogo e inventario</li><li>Pagos, impuestos y envíos se configuran en su panel, sin programarlos</li></ul>
+      <p class="small" style="margin-top:8px">Va bien si quieres operar rápido y vender ya.</p></div>
+    <div class="card c3"><h3>Tienda propia (Next.js + Stripe)</h3>
+      <ul class="dots"><li>Catálogo, carrito y checkout hechos a tu medida</li><li>Más libertad de diseño y de datos</li><li>Tú (y los agentes) mantienen más piezas</li></ul>
+      <p class="small" style="margin-top:8px">Va bien si el diseño o el flujo son muy particulares.</p></div>
+  </div>
+  <p class="small" style="margin-top:12px">Lo decidimos en la sesión 3 con el skill <span class="mono">shopify-choose-approach</span>. Precios de Shopify: <strong>verifica el plan vigente</strong>.</p>
+  <aside class="notes"><b>NOTAS</b> No decidas hoy. Que piensen si necesitan operar inventario y envíos ya, o un diseño muy a medida. Facturación CFDI: sin verificar, lo revisamos en la sesión.</aside>
+</section>
+
+<!-- 22 -->
+<section class="slide" data-note="Sin estilo de la casa · 3 min">
+  <span class="eyebrow">Sin estilo de la casa</span>
+  <h2>Cada proyecto empieza en tu marca</h2>
+  <div class="grid4" style="margin:6px 0 14px">
+    <div class="card c2"><h3>1 · Tu marca</h3><p>Logo, fotos, textos, lo que ya te gusta y lo que no.</p></div>
+    <div class="card c1"><h3>2 · 3 direcciones</h3><p>De <strong>familias distintas</strong>, no tres variantes de lo mismo.</p></div>
+    <div class="card c3"><h3>3 · Eliges</h3><p>Una gana. Las otras dos se descartan.</p></div>
+    <div class="card c4"><h3>4 · Lo anotamos</h3><p>Por qué, para no discutirlo de nuevo.</p></div>
+  </div>
+  <div class="callout"><strong>Por qué:</strong> si todo arranca del mismo estilo, todos los sitios con IA se ven igual. Aquí la que manda es tu marca.</div>
+  <aside class="notes"><b>NOTAS</b> Es la regla del skill art-direction: brief, 3 candidatos de familias distintas, elegir y rechazar con razón, y registrar el motivo.</aside>
+</section>
+
+<!-- 23 -->
+<section class="slide" data-note="Flujo completo · 4 min">
+  <span class="eyebrow">El flujo de punta a punta</span>
+  <h2>De la idea a internet, con un responsable por paso</h2>
+  <div class="flow" style="margin-top:8px">
+    <div class="f me"><span class="nm">1 Brief</span><span class="sm">Tu idea y tus materiales</span><span class="who">tú + tech-lead</span></div>
+    <div class="f"><span class="nm">2 3 direcciones</span><span class="sm">Eliges una</span><span class="who">frontend-designer</span></div>
+    <div class="f"><span class="nm">3 Referencias</span><span class="sm">Figma, Claude Design</span><span class="who">designer + tú</span></div>
+    <div class="f"><span class="nm">4 Componentes</span><span class="sm">shadcn, 21st.dev</span><span class="who">frontend-engineer</span></div>
+    <div class="f"><span class="nm">5 Construir</span><span class="sm">Páginas y datos</span><span class="who">front + backend</span></div>
+    <div class="f"><span class="nm">6 Animar</span><span class="sm">Un momento memorable</span><span class="who">frontend-engineer</span></div>
+    <div class="f"><span class="nm">7 Verificar</span><span class="sm">Capturas con Playwright</span><span class="who">web-qa</span></div>
+    <div class="f"><span class="nm">8 Checklist</span><span class="sm">Antes de lanzar</span><span class="who">web-qa</span></div>
+    <div class="f me"><span class="nm">9 Deploy</span><span class="sm">Lo ejecutas tú</span><span class="who">tú (Vercel)</span></div>
+  </div>
+  <p class="loopback" style="margin-top:16px">En amarillo, lo que decides o ejecutas tú. Del 4 al 7 se repite hasta que apruebas.</p>
+  <aside class="notes"><b>NOTAS</b> Recorre el diagrama de izquierda a derecha. Los pasos 1 y 9 son de la persona: empieza y termina el flujo. En medio, el ciclo pedir-revisar-corregir.</aside>
+</section>
+
+<!-- 24 -->
+<section class="slide" data-note="Demo en vivo · 10 min · Instructor ejecuta">
+  <span class="tag" style="background:var(--robo);color:#0a0a0a">Demo en vivo</span>
+  <h2>Veamos al equipo trabajar</h2>
+  <p class="lede" style="margin-bottom:10px">En vivo se le pide una sección al <strong>tech-lead</strong> y vemos las <strong>capturas de QA</strong>. Prompts para copiar:</p>
+  <div class="stack">
+    <div class="card"><span class="eyebrow">1 · Pedir</span><div class="quote">Quiero una sección de landing para mi marca: un hero con la frase "Hecho para ti", un botón "Ver colección" y 3 tarjetas de producto.</div></div>
+    <div class="card"><span class="eyebrow">2 · Revisar</span><div class="quote">Muéstrame cómo se ve la sección en celular y en escritorio, con capturas.</div></div>
+    <div class="card"><span class="eyebrow">3 · Corregir</span><div class="quote">El botón se ve pequeño en celular y el texto del hero casi no se lee. Corrígelo y vuelve a verificar con capturas.</div></div>
+  </div>
+  <aside class="notes"><b>NOTAS</b> Si la demo se atora, muestra capturas de una corrida previa. Quien aprende ve el ciclo pedir, revisar, corregir. Pídele que dicte la corrección.</aside>
+</section>
+
+<!-- 25 -->
+<section class="slide" data-note="Seguridad · 3 min">
+  <span class="eyebrow">Reglas de seguridad</span>
+  <h2>Qué nunca se hace, aunque el agente lo ofrezca</h2>
+  <div class="grid2" style="align-items:stretch">
+    <div class="stack">
+      <div class="card c4"><h3>Secretos fuera del chat</h3><p>Contraseñas y llaves (API keys) <strong>nunca</strong> en el chat ni en archivos del código. Van en <span class="mono">.env.local</span>.</p></div>
+      <div class="card c2"><h3>Los agentes redactan, tú apruebas</h3><p>Nada se publica ni se manda sin tu "sí".</p></div>
+    </div>
+    <div class="stack">
+      <div class="card c3"><h3>Pagos en modo de prueba</h3><p>Stripe de prueba hasta que tú decidas cobrar de verdad.</p></div>
+      <div class="card c5"><h3>Tienda real, al final</h3><p>Primero una tienda de desarrollo o un tema sin publicar. La tienda real solo después.</p></div>
+    </div>
+  </div>
+  <aside class="notes"><b>NOTAS</b> Un secreto pegado en el chat se considera filtrado: se cambia. .env.local es el archivo que no se sube a internet.</aside>
+</section>
+
+<!-- 26 -->
+<section class="slide" data-note="Las 4 sesiones · 2 min">
+  <span class="eyebrow">Las cuatro sesiones</span>
+  <h2>Cómo sigue el taller</h2>
+  <div class="grid4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:stretch;margin-top:14px">
+    <div class="card c2"><span class="pill on">Hoy · Sesión 1</span>
+      <h3 style="margin-top:10px">Bases y tu equipo</h3>
+      <ul class="dots"><li>Cómo es una web: HTML, CSS y JS</li><li>Conoces a los agentes y sus skills</li><li>Primera corrida en vivo</li></ul>
+      <p class="small" style="margin-top:10px"><strong>Te llevas:</strong> el vocabulario para pedir y revisar.</p></div>
+    <div class="card c1"><span class="pill">Sesión 2</span>
+      <h3 style="margin-top:10px">Que se vea de marca</h3>
+      <ul class="dots"><li>Dirección visual con tus materiales</li><li>Secciones modernas y animación</li><li>Revisión con capturas (QA)</li></ul>
+      <p class="small" style="margin-top:10px"><strong>Te llevas:</strong> un sitio que se ve bien en celular y escritorio.</p></div>
+    <div class="card c3"><span class="pill">Sesión 3</span>
+      <h3 style="margin-top:10px">La tienda</h3>
+      <ul class="dots"><li>Shopify o tienda propia: decidimos</li><li>Catálogo, carrito y pagos en modo prueba</li></ul>
+      <p class="small" style="margin-top:10px"><strong>Te llevas:</strong> una tienda que funciona en prueba.</p></div>
+    <div class="card c5"><span class="pill">Sesión 4</span>
+      <h3 style="margin-top:10px">Al aire</h3>
+      <ul class="dots"><li>SEO y vista previa al compartir</li><li>Checklist de lanzamiento y deploy</li><li>Plan para los próximos 30 días</li></ul>
+      <p class="small" style="margin-top:10px"><strong>Te llevas:</strong> tu sitio publicado.</p></div>
+  </div>
+  <aside class="notes"><b>NOTAS</b> Esquema general. La sesión 2 incluye la oficina virtual de AgentOS (se entrega la semana siguiente). No prometas fechas más allá de este esquema.</aside>
+</section>
+
+<!-- 27 -->
+<section class="slide" data-note="Tarea · 2 min">
+  <span class="eyebrow">Tarea para la sesión 2</span>
+  <h2>Junta tus materiales</h2>
+  <div class="grid2" style="align-items:stretch">
+    <div class="card c2"><h3>Materiales</h3><ul class="dots"><li><strong>3 fotos de campaña</strong></li><li>Tu <strong>logo</strong></li><li><strong>5 textos reales</strong> (frase del hero, descripción de 2 prendas...)</li><li>Referencias: sitios que <strong>sí</strong> te gustan y que <strong>no</strong></li></ul></div>
+    <div class="card c3"><h3>Cuentas por preparar</h3><ul class="dots"><li><strong>GitHub</strong></li><li><strong>Vercel</strong></li><li><strong>Stripe</strong> en modo de prueba</li><li><strong>Shopify</strong>: tienda de desarrollo</li></ul><p class="small" style="margin-top:8px">Solo crear las cuentas: no pagues nada todavía.</p></div>
+  </div>
+  <aside class="notes"><b>NOTAS</b> Que anote la lista ahora. Las referencias que no le gustan son tan útiles como las que sí.</aside>
+</section>
+
+<!-- 28 -->
+<section class="slide" data-note="Glosario · 3 min">
+  <span class="eyebrow">Glosario</span>
+  <h2>Diez palabras en una línea</h2>
+  <div class="grid2" style="gap:6px 28px;align-content:start;align-items:start">
+    <div class="stack" style="gap:7px;font-size:clamp(16px,1.3vw,21px)">
+      <div><strong>HTML</strong> · las piezas y el texto de la página</div>
+      <div><strong>CSS</strong> · cómo se ven: color, tamaño, lugar</div>
+      <div><strong>JavaScript</strong> · lo que se mueve y responde</div>
+      <div><strong>Componente</strong> · una pieza reutilizable</div>
+      <div><strong>Framework</strong> · estructura ya armada (Next.js)</div>
+    </div>
+    <div class="stack" style="gap:7px;font-size:clamp(16px,1.3vw,21px)">
+      <div><strong>API</strong> · cómo un programa le pide algo a otro</div>
+      <div><strong>MCP</strong> · enchufe para dar herramientas al agente</div>
+      <div><strong>Skill</strong> · receta de una tarea concreta</div>
+      <div><strong>Agente</strong> · IA que hace tareas por pasos</div>
+      <div><strong>Deploy</strong> · dejar la página en internet</div>
+    </div>
+  </div>
+  <aside class="notes"><b>NOTAS</b> No es para memorizar. Déjalo proyectado en la pausa o al final. Si alguien pregunta algo, vuelve aquí.</aside>
+</section>
+
+<!-- 29 -->
+<section class="slide" data-note="Cierre · preguntas" style="justify-content:center">
+  <span class="tag">Cierre</span>
+  <h1>Tú diriges.<br>El equipo construye.</h1>
+  <p class="lede">Hoy conociste a los agentes, sus recetas y sus herramientas. En la siguiente sesión le damos a tu marca su cara.</p>
+  <div class="chiprow"><span class="chip">¿Preguntas?</span><span class="chip">hello@algolab.academy</span></div>
+  <aside class="notes"><b>NOTAS</b> Cierra con la idea central: pedir, revisar, corregir, aprobar. Recuérdale la tarea y las cuentas.</aside>
+</section>
+
+</div>
+
+<div class="prog" id="prog"></div>
+<div class="bar">
+  <span class="logo">Algo<em>Lab</em></span>
+  <span class="now" id="now"></span>
+  <span class="right">
+    <button onclick="toggleNotes()" aria-label="Notas">N</button>
+    <button onclick="go(-1)" aria-label="Anterior">←</button>
+    <button onclick="go(1)" aria-label="Siguiente">→</button>
+    <span class="count" id="count"></span>
+  </span>
+</div>
+
+<script>
+var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+var i = 0;
+function toggleNotes(){ document.body.classList.toggle('shownotes'); }
+if (/[?&]notes\b/.test(location.search)) document.body.classList.add('shownotes');
+function show(n){
+  i = Math.max(0, Math.min(slides.length - 1, n));
+  slides.forEach(function(s, k){ s.classList.toggle('on', k === i); });
+  document.getElementById('count').textContent = (i + 1) + ' / ' + slides.length;
+  document.getElementById('now').textContent = slides[i].getAttribute('data-note') || '';
+  document.getElementById('prog').style.width = ((i + 1) / slides.length * 100) + '%';
+  slides[i].scrollTop = 0;
+  try { history.replaceState(null, '', location.search + '#' + (i + 1)); } catch (e) {}
+}
+function go(d){ show(i + d); }
+document.addEventListener('keydown', function(e){
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(1); }
+  if (e.key === 'ArrowLeft'  || e.key === 'PageUp') { e.preventDefault(); go(-1); }
+  if (e.key === 'Home') show(0);
+  if (e.key === 'End') show(slides.length - 1);
+  if (e.key === 'n' || e.key === 'N') toggleNotes();
+});
+var tx = null, ty = null;
+document.addEventListener('touchstart', function(e){ tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchend', function(e){
+  if (tx === null) return;
+  var dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? 1 : -1);
+  tx = ty = null;
+}, { passive: true });
+window.addEventListener('hashchange', function(){ var n = parseInt(location.hash.replace('#',''),10); if(!isNaN(n)) show(n-1); });
+var start = parseInt((location.hash || '').replace('#', ''), 10);
+show(isNaN(start) ? 0 : start - 1);
+</script>
+</body>
+</html>

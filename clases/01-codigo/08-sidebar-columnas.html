@@ -1,0 +1,157 @@
+<!doctype html>
+<!-- Clase 1 · Paso 08 · Sidebar: las dos columnas con grid -->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Maison Luz</title>
+  <style>
+    :root {
+      --crema: #f6f1ea;
+      --negro: #161412;
+      --rubor: #e8c4b8;
+    }
+    body {
+      margin: 0;
+      background: var(--crema);
+      color: var(--negro);
+      font-family: Helvetica, Arial, sans-serif;
+    }
+    h1, h3, h4 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: normal;   /* la serif da el toque editorial */
+    }
+
+    .navbar {
+      position: sticky;      /* se queda pegado arriba */
+      top: 0;
+      display: flex;         /* todo en una fila */
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      background: var(--negro);
+    }
+
+    .navbar a {
+      color: var(--crema);
+      text-decoration: none;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      white-space: nowrap;   /* que no se parta en 2 líneas */
+    }
+    .navbar .logo {
+      font-family: Georgia, serif;
+      font-size: 16px;
+      letter-spacing: .2em;
+    }
+    .navbar .btn {
+      margin-left: auto;     /* lo empuja a la derecha */
+      background: var(--rubor);
+      color: var(--negro);
+      padding: 8px 16px;
+      border-radius: 999px;
+    }
+
+    .hero {
+      min-height: 70vh;        /* 70% de la pantalla */
+      display: grid;
+      place-content: center;   /* centra el bloque */
+      justify-items: center;
+      text-align: center;
+      gap: 18px;
+      padding: 40px 20px;
+      background: linear-gradient(160deg, var(--rubor), var(--crema));
+    }
+    .hero h1 {
+      font-size: 48px;
+      line-height: 1.05;
+      margin: 0;
+    }
+    .hero p {
+      margin: 0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .25em;
+    }
+
+    .btn-grande {
+      background: var(--negro);
+      color: var(--crema);
+      text-decoration: none;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      padding: 16px 34px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* ▼▼▼ NUEVO ▼▼▼ */
+    .contenido {
+      display: grid;
+      grid-template-columns: 200px 1fr;   /* fija | resto */
+    }
+    .sidebar {
+      border-right: 1px solid var(--negro);
+      padding: 20px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+    .sidebar h3 { margin: 0 0 6px; }
+    .sidebar a {
+      color: var(--negro);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    /* ▲▲▲ fin de lo nuevo ▲▲▲ */
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="#" class="logo">MAISON LUZ</a>
+    <a href="#nuevo">Nuevo</a>
+    <a href="#coleccion">Colección</a>
+    <a href="#club">Club</a>
+    <a href="#bolsa" class="btn">Bolsa (0)</a>
+  </nav>
+
+  <header class="hero">
+    <p>Colección Otoño 2026</p>
+    <h1>Hecho para brillar de noche.</h1>
+    <a href="#coleccion" class="btn-grande">Ver colección</a>
+  </header>
+
+  <div class="contenido" id="coleccion">
+    <aside class="sidebar">
+      <h3>Filtrar</h3>
+      <a href="#">Vestidos</a>
+      <a href="#">Tops</a>
+      <a href="#">Accesorios</a>
+    </aside>
+
+    <main class="productos">
+      <article class="producto">
+        <div class="foto"></div>
+        <h4>Vestido Aurora</h4>
+        <p>$1,290</p>
+      </article>
+      <article class="producto">
+        <div class="foto"></div>
+        <h4>Top Ámbar</h4>
+        <p>$690</p>
+      </article>
+      <article class="producto">
+        <div class="foto"></div>
+        <h4>Bolsa Luna</h4>
+        <p>$950</p>
+      </article>
+    </main>
+  </div>
+
+  <script>
+    /* el JavaScript va aquí, hasta abajo */
+  </script>
+</body>
+</html>

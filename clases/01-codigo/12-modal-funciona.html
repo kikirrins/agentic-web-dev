@@ -1,0 +1,229 @@
+<!doctype html>
+<!-- Clase 1 · Paso 12 · Modal: la cajita y el JavaScript (¡abre y cierra!) -->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Maison Luz</title>
+  <style>
+    :root {
+      --crema: #f6f1ea;
+      --negro: #161412;
+      --rubor: #e8c4b8;
+    }
+    body {
+      margin: 0;
+      background: var(--crema);
+      color: var(--negro);
+      font-family: Helvetica, Arial, sans-serif;
+    }
+    h1, h3, h4 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: normal;   /* la serif da el toque editorial */
+    }
+
+    .navbar {
+      position: sticky;      /* se queda pegado arriba */
+      top: 0;
+      display: flex;         /* todo en una fila */
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      background: var(--negro);
+    }
+
+    .navbar a {
+      color: var(--crema);
+      text-decoration: none;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      white-space: nowrap;   /* que no se parta en 2 líneas */
+    }
+    .navbar .logo {
+      font-family: Georgia, serif;
+      font-size: 16px;
+      letter-spacing: .2em;
+    }
+    .navbar .btn {
+      margin-left: auto;     /* lo empuja a la derecha */
+      background: var(--rubor);
+      color: var(--negro);
+      padding: 8px 16px;
+      border-radius: 999px;
+    }
+
+    .hero {
+      min-height: 70vh;        /* 70% de la pantalla */
+      display: grid;
+      place-content: center;   /* centra el bloque */
+      justify-items: center;
+      text-align: center;
+      gap: 18px;
+      padding: 40px 20px;
+      background: linear-gradient(160deg, var(--rubor), var(--crema));
+    }
+    .hero h1 {
+      font-size: 48px;
+      line-height: 1.05;
+      margin: 0;
+    }
+    .hero p {
+      margin: 0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .25em;
+    }
+
+    .btn-grande {
+      background: var(--negro);
+      color: var(--crema);
+      text-decoration: none;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      padding: 16px 34px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .contenido {
+      display: grid;
+      grid-template-columns: 200px 1fr;   /* fija | resto */
+    }
+    .sidebar {
+      border-right: 1px solid var(--negro);
+      padding: 20px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+    .sidebar h3 { margin: 0 0 6px; }
+    .sidebar a {
+      color: var(--negro);
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .productos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      padding: 20px;
+    }
+    .foto {
+      aspect-ratio: 3 / 4;      /* foto vertical */
+      background: linear-gradient(160deg, var(--rubor), #b9978a);
+    }
+    .producto h4 {
+      margin: 10px 0 2px;
+      font-size: 16px;
+    }
+    .producto p {
+      margin: 0;
+      font-size: 14px;
+      opacity: .7;
+    }
+
+    .club {
+      padding: 36px;
+      text-align: center;
+    }
+    .modal {
+      position: fixed;
+      inset: 0;                     /* cubre TODA la pantalla */
+      background: rgba(22, 20, 18, .6);
+      display: none;                /* oculto por defecto */
+      place-items: center;
+      padding: 20px;
+    }
+    .modal.abierto {
+      display: grid;                /* visible */
+    }
+
+    /* ▼▼▼ NUEVO ▼▼▼ */
+    .caja {
+      background: var(--crema);
+      padding: 32px;
+      max-width: 360px;
+      text-align: center;
+    }
+    .caja h3 { margin-top: 0; font-size: 26px; }
+    .caja input {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin: 0 0 14px;
+      border: 1px solid var(--negro);
+    }
+    /* ▲▲▲ fin de lo nuevo ▲▲▲ */
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="#" class="logo">MAISON LUZ</a>
+    <a href="#nuevo">Nuevo</a>
+    <a href="#coleccion">Colección</a>
+    <a href="#club">Club</a>
+    <a href="#bolsa" class="btn">Bolsa (0)</a>
+  </nav>
+
+  <header class="hero">
+    <p>Colección Otoño 2026</p>
+    <h1>Hecho para brillar de noche.</h1>
+    <a href="#coleccion" class="btn-grande">Ver colección</a>
+  </header>
+
+  <div class="contenido" id="coleccion">
+    <aside class="sidebar">
+      <h3>Filtrar</h3>
+      <a href="#">Vestidos</a>
+      <a href="#">Tops</a>
+      <a href="#">Accesorios</a>
+    </aside>
+
+    <main class="productos">
+      <article class="producto">
+        <div class="foto"></div>
+        <h4>Vestido Aurora</h4>
+        <p>$1,290</p>
+      </article>
+      <article class="producto">
+        <div class="foto"></div>
+        <h4>Top Ámbar</h4>
+        <p>$690</p>
+      </article>
+      <article class="producto">
+        <div class="foto"></div>
+        <h4>Bolsa Luna</h4>
+        <p>$950</p>
+      </article>
+    </main>
+  </div>
+
+  <section class="club" id="club">
+    <button class="btn-grande" onclick="abrir()">10% en tu primera compra</button>
+  </section>
+
+  <div class="modal" id="modal">
+    <div class="caja">
+      <h3>Únete al club</h3>
+      <p>Entérate antes que nadie de cada colección.</p>
+      <input type="email" placeholder="tu@correo.com">
+      <button class="btn-grande" onclick="cerrar()">Lo quiero</button>
+    </div>
+  </div>
+
+  <script>
+    // ▼▼▼ NUEVO ▼▼▼
+      function abrir() {
+        document.getElementById("modal").classList.add("abierto");
+      }
+      function cerrar() {
+        document.getElementById("modal").classList.remove("abierto");
+      }
+    // ▲▲▲ fin de lo nuevo ▲▲▲
+  </script>
+</body>
+</html>

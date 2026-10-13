@@ -1,0 +1,1036 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anatomía de una página web · AlgoLab</title>
+<style>
+:root{
+  --paper:#faf9f6; --card:#ffffff; --ink:#0a0a0a; --ink-soft:#45443f;
+  --line:#0a0a0a; --shadow:#000000; --hairline:#e4e2db;
+  --prog:#5c0f8b; --game:#ffdc32; --robo:#00ccbe; --design:#0055b8;
+  --content:#ff6b35; --ai:#0a0a2e;
+  --sans:'Helvetica Neue',Arial,system-ui,sans-serif;
+  --display:'Arial Black','Helvetica Neue',Arial,sans-serif;
+  --mono:ui-monospace,'SF Mono','SFMono-Regular',Menlo,Consolas,monospace;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:var(--paper); color:var(--ink); font-family:var(--sans);
+  font-size:clamp(14px,1.2vw,18px); line-height:1.5;
+  -webkit-font-smoothing:antialiased; overflow:hidden;
+}
+
+/* ---------- deck shell ---------- */
+.deck{height:100vh;width:100vw;position:relative}
+.slide{
+  position:absolute; inset:0; display:none;
+  padding:clamp(20px,3.2vh,40px) clamp(24px,3.6vw,66px) clamp(72px,8.2vh,90px);
+  overflow:auto;
+}
+.slide.on{display:flex; flex-direction:column; animation:in .22s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.eyebrow{
+  font-family:var(--mono); text-transform:uppercase; letter-spacing:.18em;
+  font-size:clamp(10px,.82vw,13px); font-weight:700; color:var(--ink-soft);
+}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(2.2rem,6.2vw,4.8rem);
+   line-height:.96;letter-spacing:-.025em;margin:.25em 0 .3em;text-wrap:balance}
+h2{font-family:var(--display);font-weight:900;font-size:clamp(1.45rem,3.1vw,2.5rem);
+   line-height:1;letter-spacing:-.02em;margin:.1em 0 .3em;text-wrap:balance}
+h3{font-family:var(--display);font-weight:900;font-size:clamp(1rem,1.6vw,1.35rem);margin:0 0 .5em}
+p{margin:0 0 .7em;max-width:62ch}
+.lede{font-size:clamp(.95rem,1.4vw,1.2rem);color:var(--ink-soft);max-width:54ch}
+.mono{font-family:var(--mono)}
+strong{font-weight:800}
+
+.tag{
+  display:inline-block; align-self:flex-start; font-family:var(--mono);
+  font-size:clamp(10px,.8vw,12px); text-transform:uppercase; letter-spacing:.14em;
+  font-weight:700; background:var(--ink); color:var(--game); padding:6px 12px;
+  border:2px solid var(--ink); border-radius:8px;
+}
+.chiprow{display:flex;align-self:flex-start;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{
+  font-family:var(--mono); font-size:clamp(10px,.78vw,12px); text-transform:uppercase;
+  letter-spacing:.1em; font-weight:700; background:var(--card); color:var(--ink);
+  border:2px solid var(--ink); border-radius:999px; padding:5px 13px;
+}
+.card{
+  background:var(--card); border:3px solid var(--ink); border-radius:var(--r);
+  box-shadow:6px 6px 0 var(--shadow); padding:clamp(14px,1.6vw,22px);
+}
+.callout{
+  background:var(--content); color:#0a0a0a; border:3px solid var(--ink);
+  border-radius:var(--r); box-shadow:7px 7px 0 var(--shadow);
+  padding:clamp(14px,1.7vw,24px);
+}
+.callout .eyebrow{color:#0a0a0a}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,1.8vw,26px);align-items:center;flex:1;min-height:0}
+.grid2.wide-code{grid-template-columns:.92fr 1.08fr}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,1.5vw,20px);align-content:center}
+@media (max-width:900px){.grid2,.grid2.wide-code,.grid3{grid-template-columns:1fr}}
+
+ul.clean{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+ul.clean li{padding-left:29px;position:relative}
+ul.clean li::before{
+  content:attr(data-n); position:absolute; left:0; top:.15em; width:20px;height:20px;
+  background:var(--ink); color:var(--game); border-radius:6px;
+  font-family:var(--mono); font-weight:700; font-size:11px; display:grid; place-items:center;
+}
+.callout ul.clean li::before{background:#0a0a0a;color:var(--content)}
+
+/* ---------- code panel ---------- */
+.codecol{display:flex;flex-direction:column;gap:9px;min-height:0;height:100%;justify-content:center}
+.codeblock{display:flex;flex-direction:column;min-height:0}
+.codelabel{
+  font-family:var(--mono); font-size:clamp(10px,.8vw,12.5px); font-weight:700;
+  text-transform:uppercase; letter-spacing:.14em; color:var(--ink-soft); margin-bottom:6px;
+}
+pre{
+  margin:0; background:#ffffff; color:#1c1b22; border:3px solid var(--ink);
+  border-radius:12px; box-shadow:5px 5px 0 var(--shadow);
+  padding:clamp(12px,1.1vw,17px); overflow:auto; min-height:0;
+  font-family:var(--mono); font-size:clamp(13px,1.15vw,18px); line-height:1.5;
+  font-weight:500; white-space:pre; tab-size:2;
+}
+pre .t{color:#5c0f8b;font-weight:700}   /* etiquetas */
+pre .a{color:#0055b8;font-weight:700}   /* atributos y propiedades */
+pre .c{color:#6b6960;font-style:italic} /* comentarios */
+pre .s{color:#b3480f}                   /* textos entre comillas */
+
+/* ---------- live example ---------- */
+.ex{display:flex;flex-direction:column;min-height:0;height:100%;justify-content:center;gap:9px}
+.ex .exlabel{
+  font-family:var(--mono); font-size:clamp(9px,.7vw,11px); font-weight:700;
+  text-transform:uppercase; letter-spacing:.15em; color:var(--ink-soft);
+  display:flex; align-items:center; gap:8px;
+}
+.ex .exlabel::after{content:'';flex:1;height:2px;background:var(--hairline)}
+.ex .screen{
+  border:3px solid var(--ink); border-radius:12px; box-shadow:6px 6px 0 var(--shadow);
+  background:var(--card); overflow:hidden; flex:1; min-height:180px; display:flex;
+}
+.ex iframe{border:0;width:100%;height:100%;display:block;background:#faf9f6}
+.ex .hint{font-size:.87em;color:var(--ink-soft);margin:0;max-width:52ch}
+
+/* ---------- anatomy diagram ---------- */
+.anat{
+  border:3px solid var(--ink); border-radius:var(--r); background:var(--card);
+  box-shadow:7px 7px 0 var(--shadow); overflow:hidden; display:flex; flex-direction:column;
+  min-height:0; flex:1;
+}
+.anat .z{
+  border-bottom:3px solid var(--ink); padding:10px 14px; font-family:var(--mono);
+  font-weight:700; font-size:clamp(10px,.88vw,13px); text-transform:uppercase; letter-spacing:.1em;
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+}
+.anat .z span.note{font-family:var(--sans);text-transform:none;letter-spacing:0;font-weight:600;opacity:.75;font-size:.92em}
+.z-nav{background:var(--prog);color:#fff}
+.z-hero{background:var(--game);color:#0a0a0a;flex:1.4;display:flex;align-items:center}
+.z-body{flex:1;display:flex;min-height:0;align-items:stretch;padding:0}
+.z-side{background:var(--robo);color:#0a0a0a;width:30%;border-right:3px solid var(--ink);
+  border-bottom:none;flex-direction:column;justify-content:center;align-items:flex-start;gap:4px}
+.z-main{flex:1;display:grid;place-items:center;color:var(--ink-soft);font-family:var(--mono);
+  font-size:clamp(10px,.85vw,12px);text-transform:uppercase;letter-spacing:.12em}
+.z-foot{background:var(--design);color:#fff;border-bottom:none}
+
+/* ---------- timeline ---------- */
+.tl{display:grid;gap:10px;flex:1;align-content:center}
+.tl-row{
+  display:grid; grid-template-columns:100px 1fr; gap:14px; align-items:center;
+  border:3px solid var(--ink); border-radius:var(--r); background:var(--card);
+  box-shadow:5px 5px 0 var(--shadow); padding:12px 16px;
+}
+.tl-row .t{font-family:var(--mono);font-weight:700;font-size:clamp(11px,.92vw,14px);
+  background:var(--ink);color:#fff;border-radius:8px;padding:5px 8px;text-align:center}
+.tl-row.noai{background:var(--game)}
+.tl-row.ai{background:var(--robo)}
+.tl-row .what{font-weight:600}
+.tl-row .what small{display:block;font-weight:500;color:#3a3a35;font-size:.86em;margin-top:2px}
+
+/* ---------- chrome ---------- */
+.bar{
+  position:fixed;left:0;right:0;bottom:0;height:clamp(46px,5.6vh,58px);
+  border-top:3px solid var(--ink);background:var(--card);
+  display:flex;align-items:center;gap:14px;padding:0 clamp(16px,3vw,38px);z-index:40;
+}
+.bar .logo{font-family:var(--display);font-weight:900;font-size:clamp(13px,1.05vw,16px);letter-spacing:-.02em}
+.bar .logo em{font-style:normal;background:var(--game);border:2px solid var(--ink);border-radius:6px;padding:1px 6px}
+.bar .now{font-family:var(--mono);font-size:clamp(9.5px,.8vw,12px);text-transform:uppercase;
+  letter-spacing:.12em;font-weight:700;color:var(--ink-soft);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .right{margin-left:auto;display:flex;align-items:center;gap:9px}
+.bar button{
+  font-family:var(--mono);font-weight:700;font-size:clamp(11px,.88vw,13px);
+  background:var(--card);border:2px solid var(--ink);border-radius:9px;padding:6px 12px;cursor:pointer;
+}
+.bar button:hover{background:var(--game)}
+.count{font-family:var(--mono);font-weight:700;font-size:clamp(11px,.88vw,14px);
+  background:var(--ink);color:var(--game);border-radius:8px;padding:5px 11px}
+.prog{position:fixed;left:0;bottom:clamp(46px,5.6vh,58px);height:5px;background:var(--content);z-index:41;transition:width .2s ease}
+
+/* ---------- responsive ---------- */
+.grid2>*,.grid3>*{min-width:0}
+.slide{overflow-x:hidden}
+.count{white-space:nowrap}
+/* el ejemplo se dibuja a ancho de escritorio y se escala (ver fitFrames) */
+.ex .screen{position:relative}
+.ex .screen iframe{transform-origin:0 0}
+
+@media (max-width:900px){
+  .slide{padding:20px 16px 84px}
+  .slide.on{display:block}
+  .slide>*{margin-bottom:12px}
+  .tag,.eyebrow{display:inline-block}
+  .grid2,.grid3{flex:none;align-items:start}
+  .grid2[style*="stretch"]{align-items:stretch}
+  .grid3{grid-template-columns:1fr 1fr}
+  .codecol,.ex{height:auto;justify-content:flex-start}
+  .codeblock{min-height:auto}
+  pre{flex:none;font-size:12px;box-shadow:4px 4px 0 var(--shadow)}
+  .ex .screen{flex:none;min-height:0}
+  .grid2>.ex .screen:not([style]){height:60vh}
+  .card,.callout{box-shadow:4px 4px 0 var(--shadow)}
+  .anat{min-height:420px}
+  .anat .z{flex-wrap:wrap;gap:2px 10px}
+  .z-side{width:42%}
+  .tl{gap:8px}
+  .tl-row{grid-template-columns:64px 1fr;gap:10px;padding:10px 12px;box-shadow:4px 4px 0 var(--shadow)}
+  .tl-row .t{padding:4px 6px}
+  .bar{gap:10px;padding:0 12px}
+  .bar .now{flex:1;min-width:0}
+  .bar .right{gap:6px}
+  .bar button{padding:6px 10px}
+}
+@media (max-width:520px){
+  .bar .now{display:none}
+  .grid3{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<!-- 1 -->
+<section class="slide" data-note="Portada · 1 min" style="justify-content:center">
+  <span class="tag">Vibe Coding Websites · Clase 1 de 4</span>
+  <h1>Anatomía de<br>una página web</h1>
+  <p class="lede">Zara, una boutique de Instagram y una marca de lujo usan las mismas cinco piezas.
+  Hoy les ponemos nombre y las armamos pieza por pieza, usando una tienda de moda como ejemplo.</p>
+  <div class="chiprow">
+    <span class="chip">Navbar</span><span class="chip">Hero</span>
+    <span class="chip">Sidebar</span><span class="chip">Modal</span><span class="chip">Footer</span>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-note="El taller · 3 min · Conecta con lo que ya vio: Claude Design, Higgsfield, Shopify">
+  <span class="eyebrow">El taller completo</span>
+  <h2>Cuatro clases, una página que se puede publicar</h2>
+  <div class="tl">
+    <div class="tl-row noai"><span class="t">Clase 1</span><span class="what">Anatomía de una página web · <strong>hoy</strong><small>Las cinco piezas por su nombre. Las armamos a mano y luego se las pides al agente por su nombre.</small></span></div>
+    <div class="tl-row"><span class="t">Clase 2</span><span class="what">Que se vea de marca<small>Tipografía, paleta, fotos reales (las de Higgsfield) y que se vea bien en el celular.</small></span></div>
+    <div class="tl-row"><span class="t">Clase 3</span><span class="what">Vibe coding en serio<small>El agente construye más páginas (producto, lookbook) y tú diriges, revisas y corriges.</small></span></div>
+    <div class="tl-row ai"><span class="t">Clase 4</span><span class="what">Al aire<small>Publicarla con su liga y su dominio, y hacer que el formulario del club funcione de verdad.</small></span></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-note="Enganche · 3 min · Que ella diga los nombres antes que tú">
+  <span class="eyebrow">Pregunta de arranque</span>
+  <h2>¿Por qué Zara, H&amp;M y Shein<br>se parecen tanto?</h2>
+  <div class="grid2">
+    <div>
+      <p class="lede">Nadie copió a nadie. Llegaron a lo mismo porque una clienta nueva
+      tiene que entender la tienda <strong>en 3 segundos</strong>, o se regresa a Instagram.</p>
+      <p class="lede">Esas piezas que se repiten tienen nombre. Un diseñador las pide por su nombre,
+      y un agente de IA <strong>te hace mucho más caso</strong> cuando se las pides así.</p>
+    </div>
+    <div class="callout">
+      <span class="eyebrow">Idea del día</span>
+      <h3>"Hazme una página bonita"<br>vs.<br>"Agrega un hero con la frase de la colección y un botón 'Ver colección'"</h3>
+      <p style="margin:0">La segunda la escribe alguien que sabe lo que pide, y el código sale bien a la primera.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-note="El mapa · 4 min · Abre una tienda real y señala cada zona en vivo">
+  <span class="eyebrow">El mapa</span>
+  <h2>Las cinco zonas</h2>
+  <div class="anat">
+    <div class="z z-nav">Navbar <span class="note">Logo, colecciones, bolsa</span></div>
+    <div class="z z-hero">Hero section <span class="note">La foto de campaña + una frase + un botón</span></div>
+    <div class="z z-body">
+      <div class="z z-side">Sidebar <span class="note">Filtros: vestidos, tops, accesorios</span></div>
+      <div class="z-main">los productos</div>
+    </div>
+    <div class="z z-foot">Footer <span class="note">Envíos, contacto, redes</span></div>
+  </div>
+  <p style="margin-top:12px" class="lede">Falta una: el <strong>modal</strong>, que no tiene lugar fijo.
+  Es el pop-up de "10% en tu primera compra" que aparece <em>encima</em> de todo.</p>
+</section>
+
+<section class="slide" data-note="PASO 0 · 3 min · IA cerrada · Crea mi-landing.html" data-step="base" data-blocks="0">
+  <span class="tag" style="background:var(--game);color:#0a0a0a">Construimos juntos · Paso 0</span>
+  <h2>El archivo: <span class="mono" style="font-size:.76em">mi-landing.html</span></h2>
+  <div class="grid2 wide-code">
+    <div class="ex">
+      <span class="exlabel">Así se ve</span>
+      <div class="screen" style="flex:0 0 auto;height:170px;min-height:0"><iframe></iframe></div>
+      <p class="hint">Una página en blanco, de verdad. Fíjate en los tres huecos: el <span class="mono">&lt;style&gt;</span> para el CSS, el <span class="mono">&lt;body&gt;</span> para las piezas, y hasta abajo el <span class="mono">&lt;script&gt;</span> para el JavaScript. <strong>Todo lo que hagamos hoy va en uno de esos tres.</strong></p>
+    </div>
+    <div class="codecol"></div>
+  </div>
+</section>
+
+<section class="slide" data-note="PASO 0 · 3 min · Que vea cambiar el fondo. Así sabe que el CSS funciona." data-step="base" data-blocks="1">
+  <span class="tag" style="background:var(--game);color:#0a0a0a">Construimos juntos · Paso 0</span>
+  <h2>Los colores de la marca</h2>
+  <div class="grid2 wide-code">
+    <div class="ex">
+      <span class="exlabel">Ahora sí</span>
+      <div class="screen" style="flex:0 0 auto;height:170px;min-height:0"><iframe></iframe></div>
+      <p class="hint">El fondo pasó de blanco a crema: <strong>tu CSS ya está conectado.</strong> Esos colores con <span class="mono">--nombre</span> son tu paleta, y se reusan en todo el archivo. Si cambias uno, cambia toda la página.</p>
+    </div>
+    <div class="codecol"></div>
+  </div>
+</section>
+
+<section class="slide" data-note="NAVBAR · 4 min · Pregunta primero: ¿qué va a la izquierda y qué a la derecha?" data-step="navbar" data-blocks="0,1">
+  <span class="eyebrow" style="color:var(--prog)">Pieza 1 de 5 · construimos juntos</span>
+  <h2>Navbar</h2>
+  <div class="grid2 wide-code">
+    <div class="ex">
+      <span class="exlabel">Así se ve</span>
+      <div class="screen" style="flex:0 0 auto;height:112px;min-height:0"><iframe></iframe></div>
+      <p class="hint"><strong>Siempre arriba, siempre a la vista.</strong> <span class="mono">display: flex</span> pone todo en una fila y <span class="mono">position: sticky</span> lo deja pegado arriba cuando haces scroll.</p>
+    </div>
+    <div class="codecol"></div>
+  </div>
+</section>
+
+<section class="slide" data-note="NAVBAR · 4 min · margin-left:auto es el truco que se lleva hoy" data-step="navbar" data-blocks="2">
+  <span class="eyebrow" style="color:var(--prog)">Pieza 1 de 5 · el acabado</span>
+  <h2>El logo, los links y la bolsa</h2>
+  <div class="grid2 wide-code">
+    <div class="ex">
+      <span class="exlabel">Ahora sí</span>
+      <div class="screen" style="flex:0 0 auto;height:112px;min-height:0"><iframe></iframe></div>
+      <p class="hint">El truco del día: <span class="mono">margin-left: auto</span> ocupa todo el espacio libre y <strong>empuja la bolsa hasta la orilla derecha</strong>, donde toda tienda la tiene.</p>
+    </div>
+    <div class="codecol"></div>
+  </div>
+</section>
+
+<section class="slide" data-note="HERO · 4 min · Que invente la frase de SU colección. Máximo 8 palabras." data-step="hero" data-blocks="0,1" data-focus=".hero">
+  <span class="eyebrow" style="color:#b58a00">Pieza 2 de 5 · construimos juntos</span>
+  <h2>Hero section</h2>
+  <div class="grid2 wide-code">
+    <div class="ex">
+      <span class="exlabel">Así se ve</span>
+      <div class="screen" style="flex:0 0 auto;height:320px;min-height:0"><iframe></iframe></div>
+      <p class="hint"><strong>Lo primero que ve tu clienta, sin hacer scroll.</strong> Una frase grande, una chica y UN botón, que todavía parece link porque no lo hemos vestido. <span class="mono">70vh</span> = 70% del alto de la pantalla. En la clase 2 aquí entra tu foto de campaña.</p>
+    </div>
+    <div class="codecol"></div>
+  </div>
+</section>
+
+<section class="slide" data-note="EL BOTÓN · 3 min · Este se reutiliza en el modal. Dilo." data-step="hero" data-blocks="2" data-focus=".hero">
+  <span class="eyebrow" style="color:#b58a00">Pieza 2 de 5 · el botón</span>
+  <h2>Un botón que sirve para todo</h2>
+  <div class="grid2 wide-code">
+    <div class="ex">
+      <span class="exlabel">Ahora sí</span>
+      <div class="screen" style="flex:0 0 auto;height:320px;min-height:0"><iframe></iframe></div>
+      <p class="hint">Una clase, un botón, y lo pones donde quieras. <strong>Este mismo <span class="mono">.btn-grande</span> lo vas a reusar en el pop-up</strong>; por eso se llama así y no <span class="mono">.boton-del-hero</span>.</p>
+    </div>
+    <div class="codecol"></div>
+  </div>
+</section>
+
+<section class="slide" data-note="SIDEBAR · 4 min · Primero la estructura, aunque se vea fea. El CSS viene después." data-step="sidebar" data-blocks="0" data-focus=".contenido">
+  <span class="eyebrow" style="color:#0a8a80">Pieza 3 de 5 · construimos juntos</span>
+  <h2>Sidebar · primero la estructura</h2>
+  <div class="grid2 wide-code">
+    <div class="ex">
+      <span class="exlabel">Así se ve</span>
+      <div class="screen" style="flex:0 0 auto;height:280px;min-height:0"><iframe></iframe></div>
+      <p class="hint"><strong>Feo a propósito.</strong> El HTML solo dice QUÉ hay: los filtros y los productos. Cómo se acomodan lo decide el CSS, y eso va en el siguiente paso.</p>
+    </div>
+    <div class="codecol"></div>
+  </div>
+</section>
+
+<section class="slide" data-note="SIDEBAR · 4 min · Aquí entra grid-template-columns" data-step="sidebar" data-blocks="1" data-focus=".contenido">
+  <span class="eyebrow" style="color:#0a8a80">Pieza 3 de 5 · las dos columnas</span>
+  <h2>Y ahora, en columnas</h2>
+  <div class="grid2 wide-code">
+    <div class="ex">
+      <span class="exlabel">Ahora sí</span>
+      <div class="screen" style="flex:0 0 auto;height:280px;min-height:0"><iframe></iframe></div>
+      <p class="hint"><strong>Navbar = a dónde voy · Sidebar = qué estoy viendo.</strong> <span class="mono">200px 1fr</span> quiere decir que los filtros miden siempre lo mismo y el resto (<span class="mono">1fr</span>, "una fracción") es para los productos.</p>
+    </div>
+    <div class="codecol"></div>
+  </div>
+</section>
+
+<section class="slide" data-note="PRODUCTOS · 4 min · repeat(3, 1fr) es el mismo truco de la sidebar" data-step="sidebar" data-blocks="2" data-focus=".contenido">
+  <span class="eyebrow" style="color:#0a8a80">Pieza 3 de 5 · los productos</span>
+  <h2>Las tarjetas de producto</h2>
+  <div class="grid2 wide-code">
+    <div class="ex">
+      <span class="exlabel">Ahora sí</span>
+      <div class="screen" style="flex:0 0 auto;height:280px;min-height:0"><iframe></iframe></div>
+      <p class="hint"><span class="mono">repeat(3, 1fr)</span> es el mismo truco de antes: tres columnas iguales. Cambia el 3 por un 4 y tienes cuatro prendas por fila. <span class="mono">aspect-ratio: 3 / 4</span> deja la foto vertical, como en toda tienda de ropa.</p>
+    </div>
+    <div class="codecol"></div>
+  </div>
+</section>
+
+<section class="slide" data-note="MODAL · 4 min · El pop-up existe y estorba. Todavía no se esconde." data-step="modal" data-blocks="0" data-focus=".club">
+  <span class="eyebrow" style="color:var(--content)">Pieza 4 de 5 · construimos juntos</span>
+  <h2>Modal · el HTML</h2>
+  <div class="grid2 wide-code">
+    <div class="ex">
+      <span class="exlabel">Así se ve</span>
+      <div class="screen" style="flex:0 0 auto;height:250px;min-height:0"><iframe></iframe></div>
+      <p class="hint"><strong>Está ahí, y estorba.</strong> Escribiste el botón y el pop-up completo, y salen los dos encimados en la página. Falta la regla que esconde el modal.</p>
+    </div>
+    <div class="codecol"></div>
+  </div>
+</section>
+
+<section class="slide" data-note="MODAL · 4 min · Que lo apriete: todavía NO abre. Ese es el gancho." data-step="modal" data-blocks="1" data-focus=".club">
+  <span class="eyebrow" style="color:var(--content)">Pieza 4 de 5 · la capa</span>
+  <h2>La capa que cubre todo</h2>
+  <div class="grid2 wide-code">
+    <div class="ex">
+      <span class="exlabel">Pruébalo</span>
+      <div class="screen" style="flex:0 0 auto;height:250px;min-height:0"><iframe></iframe></div>
+      <p class="hint"><strong>Ya se escondió, pero el botón todavía no hace nada.</strong> <span class="mono">display: none</span> lo mantiene oculto y nada le quita esa regla. Eso es lo que sigue.</p>
+    </div>
+    <div class="codecol"></div>
+  </div>
+</section>
+
+<section class="slide" data-note="JAVASCRIPT · 5 min · Su primer JS. Que ella lo apriete." data-step="modal" data-blocks="2,3" data-focus=".club">
+  <span class="eyebrow" style="color:var(--content)">Pieza 4 de 5 · el JavaScript</span>
+  <h2>Lo que lo hace abrir</h2>
+  <div class="grid2 wide-code">
+    <div class="ex">
+      <span class="exlabel">Ahora sí, apriétalo</span>
+      <div class="screen" style="flex:0 0 auto;height:250px;min-height:0"><iframe></iframe></div>
+      <p class="hint"><strong>El CSS decide cómo se ve. El JavaScript decide cuándo.</strong> Lo único que hace es poner y quitar la palabra <span class="mono">abierto</span>. Va hasta abajo, antes de <span class="mono">&lt;/body&gt;</span>, porque el modal tiene que existir antes.</p>
+    </div>
+    <div class="codecol"></div>
+  </div>
+</section>
+
+<section class="slide" data-note="FOOTER · 4 min · La pieza fácil. Que ponga sus redes de verdad." data-step="footer" data-focus=".footer">
+  <span class="eyebrow" style="color:var(--design)">Pieza 5 de 5 · construimos juntos</span>
+  <h2>Footer</h2>
+  <div class="grid2 wide-code">
+    <div class="ex">
+      <span class="exlabel">Así se ve</span>
+      <div class="screen" style="flex:0 0 auto;height:172px;min-height:0"><iframe></iframe></div>
+      <p class="hint"><span class="mono">nav</span>, <span class="mono">header</span>, <span class="mono">aside</span>, <span class="mono">main</span> y <span class="mono">footer</span> son etiquetas <strong>semánticas</strong>: dicen QUÉ es cada cosa, no cómo se ve. Google las lee para entender tu tienda.</p>
+    </div>
+    <div class="codecol"></div>
+  </div>
+</section>
+
+<section class="slide" data-note="CIERRE DEL BLOQUE · 3 min · Todo junto = landing page" data-step="full">
+  <span class="tag">Todo junto</span>
+  <h2>Esto es una landing page</h2>
+  <div class="grid2">
+    <div class="ex">
+      <span class="exlabel">Tu archivo completo · hazle scroll</span>
+      <div class="screen"><iframe></iframe></div>
+    </div>
+    <div>
+      <p class="lede">Una landing no es una pieza suelta. Son <strong>las cinco piezas juntas
+      empujando hacia un solo objetivo</strong>: que la clienta vea la colección y se una al club.</p>
+      <div class="grid3" style="margin-top:14px;gap:10px">
+        <div class="card" style="background:var(--prog);color:#fff;padding:12px;box-shadow:4px 4px 0 #000"><h3 style="margin:0;font-size:.95rem">Navbar</h3><p style="margin:0;font-size:.82em">A dónde voy</p></div>
+        <div class="card" style="background:var(--game);padding:12px;box-shadow:4px 4px 0 #000"><h3 style="margin:0;font-size:.95rem">Hero</h3><p style="margin:0;font-size:.82em">La colección</p></div>
+        <div class="card" style="background:var(--robo);padding:12px;box-shadow:4px 4px 0 #000"><h3 style="margin:0;font-size:.95rem">Sidebar</h3><p style="margin:0;font-size:.82em">Qué estoy viendo</p></div>
+        <div class="card" style="background:var(--content);padding:12px;box-shadow:4px 4px 0 #000"><h3 style="margin:0;font-size:.95rem">Modal</h3><p style="margin:0;font-size:.82em">La oferta</p></div>
+        <div class="card" style="background:var(--design);color:#fff;padding:12px;box-shadow:4px 4px 0 #000"><h3 style="margin:0;font-size:.95rem">Footer</h3><p style="margin:0;font-size:.82em">Envíos y redes</p></div>
+        <div class="card" style="background:var(--ai);color:#f3f1ea;padding:12px;box-shadow:4px 4px 0 #000"><h3 style="margin:0;font-size:.95rem;color:var(--game)">Landing</h3><p style="margin:0;font-size:.82em">Las cinco juntas</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- vocabulario -> prompts -->
+<section class="slide" data-note="DEL VOCABULARIO AL PROMPT · 5 min · Que ella reescriba uno en voz alta">
+  <span class="tag" style="background:var(--robo);color:#0a0a0a">Del vocabulario al prompt</span>
+  <h2>Pídelo por su nombre</h2>
+  <div class="grid2" style="align-items:stretch">
+    <div class="card" style="display:grid;gap:12px;align-content:center">
+      <span class="eyebrow">Así no</span>
+      <p style="margin:0">"Ponle un menú arriba"</p>
+      <p style="margin:0">"Que se vea más elegante"</p>
+      <p style="margin:0">"Agrega los productos"</p>
+      <p style="margin:0">"Un pop-up de descuento"</p>
+    </div>
+    <div class="callout" style="display:grid;gap:12px;align-content:center;background:var(--robo)">
+      <span class="eyebrow">Así sí</span>
+      <p style="margin:0">"Un <strong>navbar sticky</strong> con el logo a la izquierda, 3 links y la bolsa empujada a la derecha"</p>
+      <p style="margin:0">"Usa mi <strong>paleta</strong>: crema de fondo, negro para texto, rubor para los botones"</p>
+      <p style="margin:0">"Una <strong>cuadrícula de 3 columnas</strong> con tarjetas de producto: foto vertical, nombre y precio"</p>
+      <p style="margin:0">"Un <strong>modal</strong> que abre con el botón del club, con un campo de correo y se cierra al enviar"</p>
+    </div>
+  </div>
+</section>
+
+<!-- taller -->
+<section class="slide" data-note="TALLER · 45 min · Ahora sí abre Claude. Cada pedido declara el rol.">
+  <span class="tag" style="background:var(--robo);color:#0a0a0a">Minuto 60 → 105 · Con IA</span>
+  <h2>Ahora sí: tu landing, con agente</h2>
+  <div class="grid2">
+    <div>
+      <p class="lede">Abres Claude, le pegas <strong>tu</strong> <span class="mono">mi-landing.html</span> y la conviertes en tu marca:
+      tu logo, tu colección, tus productos y tu oferta. Antes de cada pedido, dile <em>qué papel</em> juega.</p>
+      <ul class="clean">
+        <li data-n="1"><strong>Par</strong>: lo hacemos juntos, pieza por pieza</li>
+        <li data-n="2"><strong>Revisor</strong>: yo lo cambié, dime qué está mal</li>
+        <li data-n="3"><strong>Refactorizador</strong>: ya funciona, déjalo más limpio</li>
+        <li data-n="4"><strong>Explicador</strong>: no entiendo esta línea</li>
+        <li data-n="5"><strong>Assets</strong>: dame textos, nombres de prendas, una paleta</li>
+      </ul>
+    </div>
+    <div>
+      <div class="callout">
+        <span class="eyebrow">Prohibido</span>
+        <h3 style="margin-bottom:6px">"Hazme la página de mi tienda"</h3>
+        <p style="margin:0">Si no dices el rol, no hay pedido.
+        Y no aceptes código que no puedas explicar en voz alta.</p>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <span class="eyebrow">Bitácora de prompts · en una nota</span>
+        <ul class="clean" style="margin-top:9px">
+          <li data-n="1">Qué le pedí</li>
+          <li data-n="2">Qué salió mal</li>
+          <li data-n="3">Cómo lo corregí</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- demo -->
+<section class="slide" data-note="CIERRE · 15 min · Que la presente como si fuera a un cliente">
+  <span class="tag">Minuto 105 → 120</span>
+  <h2>Enséñamela en 60 segundos</h2>
+  <div class="grid2">
+    <div>
+      <p class="lede">Presentas tu landing y contestas tres cosas. Nada más.</p>
+      <ul class="clean">
+        <li data-n="1">Qué pieza le pusiste hoy</li>
+        <li data-n="2">Qué cambiaste tú, con tus manos</li>
+        <li data-n="3">Qué le pediste al agente, y con qué rol</li>
+      </ul>
+    </div>
+    <div class="card" style="background:var(--ai);color:#f3f1ea">
+      <span class="eyebrow" style="color:var(--game)">Tarea para la clase 2</span>
+      <h3 style="color:#f3f1ea;margin-top:8px">Tu landing con las cinco piezas funcionando</h3>
+      <p style="margin:0;opacity:.85">Navbar sticky · Hero con tu frase · 6 productos reales · Modal del club que abre y cierra · Footer con tus redes.
+      Y junta <strong>3 fotos de campaña</strong> (de tu shooting o de Higgsfield): son el arranque de la clase 2.</p>
+    </div>
+  </div>
+</section>
+
+<!-- plan -->
+<section class="slide" data-note="Solo para ti · No la proyectes si no quieres">
+  <span class="eyebrow">Plan de la clase · Referencia del instructor</span>
+  <h2>120 minutos</h2>
+  <div class="tl">
+    <div class="tl-row"><span class="t">0–10</span><span class="what">El taller, el enganche y el mapa de las cinco zonas<small>Slides 1–4. Abre una tienda real y que ella nombre las piezas antes que tú.</small></span></div>
+    <div class="tl-row noai"><span class="t">10–60</span><span class="what">Construimos juntos, paso por paso · <strong>IA cerrada</strong><small>Slides 5–18. Trece pasos de 3 a 5 min. Tú proyectas y explicas, ella teclea su mi-landing.html.</small></span></div>
+    <div class="tl-row ai"><span class="t">60–105</span><span class="what">Pídelo por su nombre + taller sobre tu marca · con Claude<small>Slides 19–20. Cada pedido declara el rol. Bitácora de prompts.</small></span></div>
+    <div class="tl-row"><span class="t">105–120</span><span class="what">Demo de 60 segundos y tarea<small>Que se lleve el archivo y la bitácora. Pide las 3 fotos para la clase 2.</small></span></div>
+  </div>
+</section>
+
+</div>
+
+<div class="prog" id="prog"></div>
+<div class="bar">
+  <span class="logo">Algo<em>Lab</em></span>
+  <span class="now" id="now"></span>
+  <span class="right">
+    <button onclick="go(-1)" aria-label="Anterior">←</button>
+    <button onclick="go(1)" aria-label="Siguiente">→</button>
+    <span class="count" id="count"></span>
+  </span>
+</div>
+
+
+<script>
+/* ==========================================================
+   UNA SOLA FUENTE DE VERDAD
+   El código que se ve en el slide es exactamente el que se
+   inyecta en el <iframe> del ejemplo, y el ejemplo sólo tiene
+   lo que la alumna ya lleva tecleado. No pueden divergir.
+   ========================================================== */
+
+var BASE_CSS =
+':root {\n' +
+'  --crema: #f6f1ea;\n' +
+'  --negro: #161412;\n' +
+'  --rubor: #e8c4b8;\n' +
+'}\n' +
+'body {\n' +
+'  margin: 0;\n' +
+'  background: var(--crema);\n' +
+'  color: var(--negro);\n' +
+'  font-family: Helvetica, Arial, sans-serif;\n' +
+'}\n' +
+'h1, h3, h4 {\n' +
+'  font-family: Georgia, "Times New Roman", serif;\n' +
+'  font-weight: normal;   /* la serif da el toque editorial */\n' +
+'}';
+
+/* cada paso = lista de bloques; cada bloque se muestra tal cual
+   y alimenta el ejemplo segun su tipo (html / css / js)        */
+var STEPS = {
+
+  base: [
+    { kind: 'skip', label: 'mi-landing.html · el esqueleto completo', code:
+'<!doctype html>\n' +
+'<html lang="es">\n' +
+'<head>\n' +
+'  <meta charset="utf-8">\n' +
+'  <title>Maison Luz</title>\n' +
+'  <style>\n' +
+'    /* TODO el CSS va aquí adentro */\n' +
+'  </style>\n' +
+'</head>\n' +
+'<body>\n' +
+'\n' +
+'  <!-- las piezas van aquí -->\n' +
+'\n' +
+'  <script>\n' +
+'    /* el JavaScript va aquí, hasta abajo */\n' +
+'  </' + 'script>\n' +
+'</body>\n' +
+'</html>' },
+    { kind: 'css', label: 'CSS · pégalo dentro de &lt;style&gt;', code: BASE_CSS }
+  ],
+
+  navbar: [
+    { kind: 'html', label: 'HTML · lo primero dentro de &lt;body&gt;', code:
+'<nav class="navbar">\n' +
+'  <a href="#" class="logo">MAISON LUZ</a>\n' +
+'  <a href="#nuevo">Nuevo</a>\n' +
+'  <a href="#coleccion">Colección</a>\n' +
+'  <a href="#club">Club</a>\n' +
+'  <a href="#bolsa" class="btn">Bolsa (0)</a>\n' +
+'</nav>' },
+    { kind: 'css', label: 'CSS · la barra', code:
+'.navbar {\n' +
+'  position: sticky;      /* se queda pegado arriba */\n' +
+'  top: 0;\n' +
+'  display: flex;         /* todo en una fila */\n' +
+'  align-items: center;\n' +
+'  gap: 16px;\n' +
+'  padding: 14px 20px;\n' +
+'  background: var(--negro);\n' +
+'}' },
+    { kind: 'css', label: 'CSS · el logo, los links y la bolsa', code:
+'.navbar a {\n' +
+'  color: var(--crema);\n' +
+'  text-decoration: none;\n' +
+'  font-size: 12px;\n' +
+'  text-transform: uppercase;\n' +
+'  letter-spacing: .1em;\n' +
+'  white-space: nowrap;   /* que no se parta en 2 líneas */\n' +
+'}\n' +
+'.navbar .logo {\n' +
+'  font-family: Georgia, serif;\n' +
+'  font-size: 16px;\n' +
+'  letter-spacing: .2em;\n' +
+'}\n' +
+'.navbar .btn {\n' +
+'  margin-left: auto;     /* lo empuja a la derecha */\n' +
+'  background: var(--rubor);\n' +
+'  color: var(--negro);\n' +
+'  padding: 8px 16px;\n' +
+'  border-radius: 999px;\n' +
+'}' }
+  ],
+
+  hero: [
+    { kind: 'html', label: 'HTML · debajo del navbar', code:
+'<header class="hero">\n' +
+'  <p>Colección Otoño 2026</p>\n' +
+'  <h1>Hecho para brillar de noche.</h1>\n' +
+'  <a href="#coleccion" class="btn-grande">Ver colección</a>\n' +
+'</header>' },
+    { kind: 'css', label: 'CSS · agrégalo al &lt;style&gt;', code:
+'.hero {\n' +
+'  min-height: 70vh;        /* 70% de la pantalla */\n' +
+'  display: grid;\n' +
+'  place-content: center;   /* centra el bloque */\n' +
+'  justify-items: center;\n' +
+'  text-align: center;\n' +
+'  gap: 18px;\n' +
+'  padding: 40px 20px;\n' +
+'  background: linear-gradient(160deg, var(--rubor), var(--crema));\n' +
+'}\n' +
+'.hero h1 {\n' +
+'  font-size: 48px;\n' +
+'  line-height: 1.05;\n' +
+'  margin: 0;\n' +
+'}\n' +
+'.hero p {\n' +
+'  margin: 0;\n' +
+'  font-size: 13px;\n' +
+'  text-transform: uppercase;\n' +
+'  letter-spacing: .25em;\n' +
+'}' },
+    { kind: 'css', label: 'CSS · el botón reutilizable', code:
+'.btn-grande {\n' +
+'  background: var(--negro);\n' +
+'  color: var(--crema);\n' +
+'  text-decoration: none;\n' +
+'  font-size: 13px;\n' +
+'  text-transform: uppercase;\n' +
+'  letter-spacing: .15em;\n' +
+'  padding: 16px 34px;\n' +
+'  border: none;\n' +
+'  cursor: pointer;\n' +
+'}' }
+  ],
+
+  sidebar: [
+    { kind: 'html', label: 'HTML · debajo del hero', code:
+'<div class="contenido" id="coleccion">\n' +
+'  <aside class="sidebar">\n' +
+'    <h3>Filtrar</h3>\n' +
+'    <a href="#">Vestidos</a>\n' +
+'    <a href="#">Tops</a>\n' +
+'    <a href="#">Accesorios</a>\n' +
+'  </aside>\n' +
+'\n' +
+'  <main class="productos">\n' +
+'    <article class="producto">\n' +
+'      <div class="foto"></div>\n' +
+'      <h4>Vestido Aurora</h4>\n' +
+'      <p>$1,290</p>\n' +
+'    </article>\n' +
+'    <article class="producto">\n' +
+'      <div class="foto"></div>\n' +
+'      <h4>Top Ámbar</h4>\n' +
+'      <p>$690</p>\n' +
+'    </article>\n' +
+'    <article class="producto">\n' +
+'      <div class="foto"></div>\n' +
+'      <h4>Bolsa Luna</h4>\n' +
+'      <p>$950</p>\n' +
+'    </article>\n' +
+'  </main>\n' +
+'</div>' },
+    { kind: 'css', label: 'CSS · las dos columnas', code:
+'.contenido {\n' +
+'  display: grid;\n' +
+'  grid-template-columns: 200px 1fr;   /* fija | resto */\n' +
+'}\n' +
+'.sidebar {\n' +
+'  border-right: 1px solid var(--negro);\n' +
+'  padding: 20px;\n' +
+'  display: grid;\n' +
+'  gap: 10px;\n' +
+'  align-content: start;\n' +
+'}\n' +
+'.sidebar h3 { margin: 0 0 6px; }\n' +
+'.sidebar a {\n' +
+'  color: var(--negro);\n' +
+'  text-decoration: none;\n' +
+'  font-size: 14px;\n' +
+'}' },
+    { kind: 'css', label: 'CSS · las tarjetas de producto', code:
+'.productos {\n' +
+'  display: grid;\n' +
+'  grid-template-columns: repeat(3, 1fr);\n' +
+'  gap: 18px;\n' +
+'  padding: 20px;\n' +
+'}\n' +
+'.foto {\n' +
+'  aspect-ratio: 3 / 4;      /* foto vertical */\n' +
+'  background: linear-gradient(160deg, var(--rubor), #b9978a);\n' +
+'}\n' +
+'.producto h4 {\n' +
+'  margin: 10px 0 2px;\n' +
+'  font-size: 16px;\n' +
+'}\n' +
+'.producto p {\n' +
+'  margin: 0;\n' +
+'  font-size: 14px;\n' +
+'  opacity: .7;\n' +
+'}' }
+  ],
+
+  modal: [
+    { kind: 'html', label: 'HTML · debajo del contenido', code:
+'<section class="club" id="club">\n' +
+'  <button class="btn-grande" onclick="abrir()">10% en tu primera compra</button>\n' +
+'</section>\n' +
+'\n' +
+'<div class="modal" id="modal">\n' +
+'  <div class="caja">\n' +
+'    <h3>Únete al club</h3>\n' +
+'    <p>Entérate antes que nadie de cada colección.</p>\n' +
+'    <input type="email" placeholder="tu@correo.com">\n' +
+'    <button class="btn-grande" onclick="cerrar()">Lo quiero</button>\n' +
+'  </div>\n' +
+'</div>' },
+    { kind: 'css', label: 'CSS · la capa que cubre todo', code:
+'.club {\n' +
+'  padding: 36px;\n' +
+'  text-align: center;\n' +
+'}\n' +
+'.modal {\n' +
+'  position: fixed;\n' +
+'  inset: 0;                     /* cubre TODA la pantalla */\n' +
+'  background: rgba(22, 20, 18, .6);\n' +
+'  display: none;                /* oculto por defecto */\n' +
+'  place-items: center;\n' +
+'  padding: 20px;\n' +
+'}\n' +
+'.modal.abierto {\n' +
+'  display: grid;                /* visible */\n' +
+'}' },
+    { kind: 'css', label: 'CSS · la cajita de adentro', code:
+'.caja {\n' +
+'  background: var(--crema);\n' +
+'  padding: 32px;\n' +
+'  max-width: 360px;\n' +
+'  text-align: center;\n' +
+'}\n' +
+'.caja h3 { margin-top: 0; font-size: 26px; }\n' +
+'.caja input {\n' +
+'  display: block;\n' +
+'  width: 100%;\n' +
+'  box-sizing: border-box;\n' +
+'  padding: 12px;\n' +
+'  margin: 0 0 14px;\n' +
+'  border: 1px solid var(--negro);\n' +
+'}' },
+    { kind: 'js', label: 'JavaScript · antes de &lt;/body&gt;', code:
+'<script>\n' +
+'  function abrir() {\n' +
+'    document.getElementById("modal").classList.add("abierto");\n' +
+'  }\n' +
+'  function cerrar() {\n' +
+'    document.getElementById("modal").classList.remove("abierto");\n' +
+'  }\n' +
+'</' + 'script>' }
+  ],
+
+  footer: [
+    { kind: 'html', label: 'HTML · hasta abajo del &lt;body&gt;', code:
+'<footer class="footer">\n' +
+'  <p>© 2026 · Maison Luz · Hecho en México</p>\n' +
+'  <nav>\n' +
+'    <a href="#">Envíos</a>\n' +
+'    <a href="#">Instagram</a>\n' +
+'    <a href="#">Contacto</a>\n' +
+'  </nav>\n' +
+'</footer>' },
+    { kind: 'css', label: 'CSS · agrégalo al &lt;style&gt;', code:
+'.footer {\n' +
+'  background: var(--negro);\n' +
+'  color: var(--crema);\n' +
+'  padding: 24px;\n' +
+'  display: flex;\n' +
+'  flex-wrap: wrap;\n' +
+'  gap: 12px;\n' +
+'  justify-content: space-between;   /* separa los extremos */\n' +
+'  align-items: center;\n' +
+'  font-size: 13px;\n' +
+'}\n' +
+'.footer p { margin: 0; }\n' +
+'.footer a {\n' +
+'  color: var(--crema);\n' +
+'  margin-left: 16px;\n' +
+'}' }
+  ]
+};
+
+var ORDER = ['base', 'navbar', 'hero', 'sidebar', 'modal', 'footer'];
+
+/* ---------------- resaltado de sintaxis ---------------- */
+var A = '', B = '';
+
+function esc(s){
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function highlight(src){
+  var out = esc(src), store = [];
+  function keep(html){ store.push(html); return A + (store.length - 1) + B; }
+
+  out = out.replace(/\/\*[\s\S]*?\*\//g, function(m){ return keep('<span class="c">' + m + '</span>'); });
+  out = out.replace(/&lt;!--[\s\S]*?--&gt;/g, function(m){ return keep('<span class="c">' + m + '</span>'); });
+  out = out.replace(/"[^"\n]*"/g, function(m){ return keep('<span class="s">' + m + '</span>'); });
+  out = out.replace(/&lt;(\/?)([a-zA-Z][a-zA-Z0-9]*)/g, function(m, sl, nm){
+    return keep('<span class="t">&lt;' + sl + nm + '</span>');
+  });
+  out = out.replace(/(\/?)&gt;/g, function(m){ return keep('<span class="t">' + m + '</span>'); });
+  out = out.replace(/^([ \t]*)([a-z-]+)([ \t]*:)/gm, function(m, sp, prop, colon){
+    return sp + keep('<span class="a">' + prop + '</span>') + colon;
+  });
+  out = out.replace(/ ([a-zA-Z-]+)=/g, function(m, at){
+    return ' ' + keep('<span class="a">' + at + '</span>') + '=';
+  });
+
+  return out.replace(new RegExp(A + '(\\d+)' + B, 'g'), function(m, n){ return store[+n]; });
+}
+
+/* ------- documento del ejemplo: sólo lo ya tecleado ------- */
+function stripScriptTags(s){
+  return s.replace(/<script>/g, '').replace(/<\/script>/g, '');
+}
+
+function docFor(stepName, lastBlock, focus){
+  var css = '', body = '', js = '', all = (stepName === 'full');
+
+  for (var k = 0; k < ORDER.length; k++){
+    var name = ORDER[k], blocks = STEPS[name];
+    var current = (name === stepName);
+    var limit = (current && !all && lastBlock != null) ? lastBlock : blocks.length - 1;
+
+    for (var j = 0; j < blocks.length; j++){
+      var bk = blocks[j];
+      // los pasos anteriores ya estan completos; el actual, sólo hasta donde vamos
+      if (current && j > limit) break;
+      if (bk.kind === 'css') css += '\n' + bk.code;
+      else if (bk.kind === 'html') body += bk.code + '\n';
+      else if (bk.kind === 'js') js += stripScriptTags(bk.code) + '\n';
+    }
+    if (current) break;
+  }
+
+  if (focus){
+    js += '\nfunction _enfoca(){' +
+          '\n  var _f = document.querySelector("' + focus + '");' +
+          '\n  if (_f) _f.scrollIntoView({ block: "center" });' +
+          '\n}' +
+          '\n_enfoca();' +
+          '\nwindow.addEventListener("message", _enfoca);';
+  }
+
+  return '<!doctype html><html lang="es"><head><meta charset="utf-8">' +
+         '<style>' + css + '</style></head><body>' + body +
+         '<' + 'script>' + js + '<' + '/script></body></html>';
+}
+
+/* ---------------- pintar los slides ---------------- */
+Array.prototype.forEach.call(document.querySelectorAll('.slide[data-step]'), function(sl){
+  var name = sl.getAttribute('data-step');
+  var blocks = STEPS[name];
+  var picked = null;
+
+  if (blocks){
+    var attr = sl.getAttribute('data-blocks');
+    picked = attr
+      ? attr.split(',').map(function(n){ return parseInt(n, 10); })
+      : blocks.map(function(_, idx){ return idx; });
+  }
+
+  var frame = sl.querySelector('iframe');
+  if (frame){
+    var last = picked ? picked[picked.length - 1] : null;
+    frame.setAttribute('srcdoc', docFor(name, last, sl.getAttribute('data-focus')));
+  }
+
+  var col = sl.querySelector('.codecol');
+  if (!col || !blocks) return;
+
+  picked.forEach(function(idx){
+    var bk = blocks[idx];
+    if (!bk) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'codeblock';
+    var lab = document.createElement('div');
+    lab.className = 'codelabel';
+    lab.innerHTML = bk.label;
+    var pre = document.createElement('pre');
+    pre.innerHTML = highlight(bk.code);
+    wrap.appendChild(lab);
+    wrap.appendChild(pre);
+    col.appendChild(wrap);
+  });
+});
+
+/* ------- ejemplo responsive: en pantallas chicas la landing se
+   dibuja a ancho de escritorio y se escala, como una miniatura ------- */
+var FRAME_W = 640;
+function fitFrames(slide){
+  Array.prototype.forEach.call(slide.querySelectorAll('.ex .screen iframe'), function(fr){
+    var box = fr.parentNode, w = box.clientWidth, h = box.clientHeight;
+    if (!w) return;
+    if (w < FRAME_W){
+      var s = w / FRAME_W;
+      fr.style.cssText = 'position:absolute;top:0;left:0;width:' + FRAME_W + 'px;height:' +
+                         (h / s) + 'px;transform:scale(' + s + ')';
+    } else {
+      fr.style.cssText = '';
+    }
+  });
+}
+window.addEventListener('resize', function(){ fitFrames(slides[i]); });
+
+/* ---------------- navegación ---------------- */
+var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+var i = 0;
+function show(n){
+  i = Math.max(0, Math.min(slides.length - 1, n));
+  slides.forEach(function(s, k){ s.classList.toggle('on', k === i); });
+  document.getElementById('count').textContent = (i + 1) + ' / ' + slides.length;
+  document.getElementById('now').textContent = slides[i].getAttribute('data-note') || '';
+  document.getElementById('prog').style.width = ((i + 1) / slides.length * 100) + '%';
+  slides[i].scrollTop = 0;
+  fitFrames(slides[i]);
+  // el iframe sólo puede centrarse cuando el slide ya es visible
+  var _fr = slides[i].querySelector('iframe');
+  if (_fr && slides[i].getAttribute('data-focus')){
+    setTimeout(function(){
+      try { _fr.contentWindow.postMessage('enfoca', '*'); } catch (e) {}
+    }, 60);
+  }
+  try { history.replaceState(null, '', '#' + (i + 1)); } catch (e) {}
+}
+function go(d){ show(i + d); }
+document.addEventListener('keydown', function(e){
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(1); }
+  if (e.key === 'ArrowLeft'  || e.key === 'PageUp') { e.preventDefault(); go(-1); }
+  if (e.key === 'Home') show(0);
+  if (e.key === 'End') show(slides.length - 1);
+});
+/* swipe en celular / tablet (horizontal y decidido, para no pelear con el scroll) */
+var tx = null, ty = null;
+document.addEventListener('touchstart', function(e){
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, { passive: true });
+document.addEventListener('touchend', function(e){
+  if (tx === null) return;
+  var dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? 1 : -1);
+  tx = ty = null;
+}, { passive: true });
+
+var start = parseInt((location.hash || '').replace('#', ''), 10);
+show(isNaN(start) ? 0 : start - 1);
+
+</script>
+</body>
+</html>
