@@ -46,4 +46,4 @@ QA and Shopify developer; Claude Design, Figma and Higgsfield are human/optional
 
 Not vendored: **UI/UX Pro Max** (audit "Later"): it needs its Python search script and 7 CSVs whose palettes are generic category defaults, which fights the no-house-style rule; revisit only
 if the designer needs a contrast/token safety net. Also not taken: Apple Design Skill, ComposioHQ list, HyperFrames, MotionSites, Open V0 clones, Motion AI Kit installer (owner may run it).
-Refresh policy: quarterly review of the pinned commits (owner: Mty Agentic Labs); never track "latest".
+Refresh policy: quarterly review of the pinned commits (owner: AlgoLab); never track "latest".

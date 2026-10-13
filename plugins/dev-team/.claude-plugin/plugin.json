@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Web development team: tech lead, frontend designer, frontend and backend engineers, QA and a Shopify developer to build websites and online stores with Next.js, Tailwind, shadcn/ui, a database and Stripe, or on Shopify with Liquid themes, Storefront/Admin APIs and automations. Includes an art-direction library of options (no house style), animation craft, visual verification with a guarded Playwright MCP, component vetting and design critique.",
   "author": {
-    "name": "Mty Agentic Labs"
+    "name": "AlgoLab",
+    "email": "hello@algolab.academy"
   }
 }

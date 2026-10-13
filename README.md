@@ -1,6 +1,6 @@
 # agentic-web-dev
 
-Equipo de agentes y skills para desarrollo web agéntico (plugin `dev-team` para Claude Code / Claude Desktop), de **Mty Agentic Labs**.
+Equipo de agentes y skills para desarrollo web agéntico (plugin `dev-team` para Claude Code / Claude Desktop), de **AlgoLab** (escuela de tecnología).
 
 Son **6 agentes** y **30 skills** que te ayudan a construir un sitio o tienda en línea: desde el brief hasta una página que abre, se ve bien y está lista para publicarse. Funciona **sin** la oficina virtual AgentOS.
 
@@ -108,7 +108,7 @@ Las direcciones de arte, paletas y tipografías de la biblioteca son **opciones 
 
 ## Créditos y licencias
 
-Parte del material adapta trabajo de terceros bajo sus propias licencias: ver [`plugins/dev-team/THIRD-PARTY-NOTICES.md`](plugins/dev-team/THIRD-PARTY-NOTICES.md). El contenido original es de Mty Agentic Labs; ver [`NOTICE.md`](NOTICE.md) (todos los derechos reservados sobre el contenido original; aún no se otorga una licencia de código abierto).
+Parte del material adapta trabajo de terceros bajo sus propias licencias: ver [`plugins/dev-team/THIRD-PARTY-NOTICES.md`](plugins/dev-team/THIRD-PARTY-NOTICES.md). El contenido original es de AlgoLab; ver [`NOTICE.md`](NOTICE.md) (todos los derechos reservados sobre el contenido original; aún no se otorga una licencia de código abierto).
 
 ## Qué sigue
 
@@ -125,3 +125,7 @@ Este plugin funciona por sí solo. Si además instalas la oficina virtual **Agen
 `dev-team` is a Claude plugin with 6 agents (tech-lead, frontend-designer, frontend-engineer, backend-engineer, web-qa, shopify-developer) and 30 skills for agentic web development (Next.js, Tailwind, shadcn/ui, Stripe, Shopify). It works standalone, without the AgentOS office: documents and screenshots are written inside the project folder.
 
 Install: `/plugin marketplace add kikirrins/agentic-web-dev` then `/plugin install dev-team@agentic-web-dev`. Requires Node 22+, pnpm, Git and Chrome/Chromium for the Playwright MCP. See `NOTICE.md` and `plugins/dev-team/THIRD-PARTY-NOTICES.md` for licensing.
+
+## Contacto
+
+AlgoLab · hello@algolab.academy

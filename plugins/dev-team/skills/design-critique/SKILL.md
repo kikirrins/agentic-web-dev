@@ -5,7 +5,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 <!-- Derived from pbakaus/impeccable reference text (craft-floor, typeset, colorize, layout, critique), Apache-2.0, Copyright 2025 Paul Bakaus, commit 2f98774f86bc05563876643db37e6c37c322850f.
-     Changes by Mty Agentic Labs: condensed and rewritten; removed commands, detector binary, hooks, live mode, sub-agent orchestration and platform-specific parts; bans turned into "decide, do not default". See ../../THIRD-PARTY-NOTICES.md (Apache-2.0 text and NOTICE). -->
+     Changes by AlgoLab: condensed and rewritten; removed commands, detector binary, hooks, live mode, sub-agent orchestration and platform-specific parts; bans turned into "decide, do not default". See ../../THIRD-PARTY-NOTICES.md (Apache-2.0 text and NOTICE). -->
 # Design critique
 
 Judge the result against **the project's own direction** (`docs/visual-direction.md`, tokens, the person's brand). Nothing here is a house style:
