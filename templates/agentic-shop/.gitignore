@@ -1,0 +1,30 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# next.js
+/.next/
+/out/
+/build
+*.tsbuildinfo
+next-env.d.ts
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
+pnpm-debug.log*
+
+# env files: never commit secrets (the example is fine)
+.env*
+!.env.example
+
+# ops outputs (business data, logs and proposals)
+/ops/data/
+/ops/logs/
+/ops/proposals/
+/ops/reports/
+
+# vercel
+.vercel
