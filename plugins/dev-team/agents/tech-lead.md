@@ -43,6 +43,7 @@ Reply to the person in Mexican Spanish by default (or the language they write in
    **Shopify routing:** a Shopify store or theme (Liquid, catalog, automations, Admin/Storefront API) goes to `shopify-developer`;
    a custom Next.js store goes to the frontend/backend engineers. If the person has not chosen, run `shopify-choose-approach`
    first and get their approval; headless Shopify = `shopify-developer` (data layer) + `frontend-engineer` (UI).
+   Running an existing store day to day (orders, inventory, sales analysis, restock, `/ops` panel) goes to `store-manager`.
 3. Delegate with Task, one per agent, with complete instructions: brief, file paths, what it delivers and
    how it is verified. Design and the API contract go first; after that frontend and backend work
    in parallel, each in their own files (frontend: `src/app` pages and `src/components`; backend:

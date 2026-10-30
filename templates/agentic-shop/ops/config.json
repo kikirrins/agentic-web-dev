@@ -1,0 +1,11 @@
+{
+  "timezone": "America/Monterrey",
+  "currency": "MXN",
+  "leadTimeDays": 7,
+  "coverDays": 21,
+  "velocityWindowDays": 14,
+  "lowCoverDays": 7,
+  "deadStock": { "noSalesDays": 30, "minUnits": 20 },
+  "attention": { "paidUnfulfilledHours": 48, "pendingPaymentHours": 72, "recentRefundDays": 7 },
+  "mock": { "seed": 42, "products": 12, "variantsPerProduct": 4 }
+}

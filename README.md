@@ -2,7 +2,7 @@
 
 Equipo de agentes y skills para desarrollo web agéntico (plugin `dev-team` para Claude Code / Claude Desktop), de **AlgoLab** (escuela de tecnología).
 
-Son **6 agentes** y **30 skills** que te ayudan a construir un sitio o tienda en línea: desde el brief hasta una página que abre, se ve bien y está lista para publicarse. Funciona **sin** la oficina virtual AgentOS.
+Son **7 agentes** y **34 skills** que te ayudan a construir un sitio o tienda en línea: desde el brief hasta una página que abre, se ve bien y está lista para publicarse. Funciona **sin** la oficina virtual AgentOS.
 
 ## Instalación
 
@@ -36,6 +36,7 @@ Empieza siempre con el **tech-lead**: él entiende tu petición, la divide y lla
 - "Con el tech-lead: quiero una landing para mi marca de velas artesanales en Monterrey. Tengo logo y 6 fotos."
 - "Con el tech-lead: arma una tienda en línea con pagos con Stripe para mi negocio de cosméticos."
 - "Con el frontend-designer: propón tres direcciones de arte para mi sitio y ayúdame a elegir una."
+- "Con el store-manager: ¿cómo va la tienda hoy? Revisa pedidos e inventario y dime qué resurto."
 - "Con el web-qa: revisa mi sitio en http://localhost:3000 (accesibilidad, rendimiento y móvil)."
 
 Al trabajar sin AgentOS, los agentes guardan todo en una carpeta de tu computadora (te preguntan cuál, o usan `./<proyecto>/` en la carpeta actual): `SITE-README.md`, `docs/*.md`, `qa-report.md` y `screenshots/`. Te dicen las rutas relativas.
@@ -50,6 +51,7 @@ Al trabajar sin AgentOS, los agentes guardan todo en una carpeta de tu computado
 | `backend-engineer` | Datos y API (Drizzle, SQLite, rutas, Stripe) | Formularios, pedidos, reservas, pagos |
 | `web-qa` | Revisión con evidencia | Antes de entregar o publicar y después de cada ronda de arreglos; reporta, no arregla |
 | `shopify-developer` | Tiendas Shopify | Temas Liquid, catálogo, APIs y automatizaciones de Shopify |
+| `store-manager` | Gerente de tienda (e-commerce agéntico) | Todos los días: revisa pedidos e inventario, analiza ventas y margen, y te propone acciones (resurtir, surtir pedidos) que tú apruebas |
 
 ## Skills por área
 
@@ -92,8 +94,23 @@ Al trabajar sin AgentOS, los agentes guardan todo en una carpeta de tu computado
 - `shopify-admin-api-automation`: automatizaciones con Admin API, webhooks y Flow (siempre dry-run primero).
 - `shopify-store-operations`: rutinas diarias y reporte semanal de la tienda.
 
+**E-commerce agéntico (tienda Shopify + Next.js)**
+- `ecommerce-daily-cycle`: el ciclo diario snapshot → análisis → propuestas → tu aprobación → ejecución con dry-run y bitácora; estados de pedido explicados.
+- `restock-planning`: velocidad de venta, días de cobertura, agotados, stock muerto y borrador de orden de compra.
+- `ecommerce-financial-analysis`: ventas brutas y netas, descuentos, reembolsos, ticket promedio, margen, clientas nuevas vs recurrentes (con prompts listos).
+- `ecommerce-dashboard`: tu panel `/ops` con KPIs, gráfica de ventas, pedidos por atender, inventario y acciones por aprobar.
+
 **Publicación**
 - `deploy-vercel`: deja documentado el despliegue en Vercel; tú ejecutas los pasos.
+
+## Plantilla: tienda agéntica (Shopify + Next.js)
+
+[`templates/agentic-shop/`](templates/agentic-shop/) es un sistema de e-commerce agéntico listo para correr: tienda en Next.js conectada a Shopify por la Storefront API, scripts diarios (`pnpm ops:daily`) que leen pedidos e inventario con la Admin API, analizan ventas y margen y proponen acciones, y un panel `/ops` donde el dueño aprueba. Sin credenciales funciona con **mock.shop** y datos de demostración. Lo opera el agente `store-manager`; instrucciones en su README.
+
+```bash
+cp -r templates/agentic-shop mi-tienda && cd mi-tienda
+pnpm i && pnpm ops:daily --mock && pnpm dev   # http://localhost:3017 y /ops
+```
 
 ## Principio: no hay estilo de la casa
 
@@ -134,7 +151,7 @@ Este plugin funciona por sí solo. Si además instalas la oficina virtual **Agen
 
 ## English summary
 
-`dev-team` is a Claude plugin with 6 agents (tech-lead, frontend-designer, frontend-engineer, backend-engineer, web-qa, shopify-developer) and 30 skills for agentic web development (Next.js, Tailwind, shadcn/ui, Stripe, Shopify). It works standalone, without the AgentOS office: documents and screenshots are written inside the project folder.
+`dev-team` is a Claude plugin with 7 agents (tech-lead, frontend-designer, frontend-engineer, backend-engineer, web-qa, shopify-developer, store-manager) and 34 skills for agentic web development (Next.js, Tailwind, shadcn/ui, Stripe, Shopify). It works standalone, without the AgentOS office: documents and screenshots are written inside the project folder.
 
 Install: `/plugin marketplace add kikirrins/agentic-web-dev` then `/plugin install dev-team@agentic-web-dev`. Requires Node 22+, pnpm, Git and Chrome/Chromium for the Playwright MCP. See `NOTICE.md` and `plugins/dev-team/THIRD-PARTY-NOTICES.md` for licensing.
 
