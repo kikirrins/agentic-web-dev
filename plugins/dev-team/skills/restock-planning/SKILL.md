@@ -30,6 +30,18 @@ Per variant: `available` (sum of locations), `unitCost` (InventoryItem cost, may
 Fashion caveat: sizes behave differently; plan per variant (size/color), not per product. New products (< 14 days) have little history: say so
 and use a conservative quantity the owner confirms.
 
+## By branch (sucursal = Shopify location)
+
+When the snapshot has more than one location per variant, plan per **variant × branch** too:
+- Sales by branch: Shopify online orders do not say which branch sold in person. Use per-branch sales only if the store records them
+  (POS orders carry a location `[UNVERIFIED for the snapshot query: add the order's retail location if POS is used]`); otherwise say
+  "velocidad total de la tienda" and split cover by each branch's stock.
+- **Transfer before buying**: if branch A has more than 2× the target cover and branch B is at risk, propose a transfer (units, from, to) instead
+  of a purchase. It executes as two `inventory_adjust` actions (−n at A, +n at B, reason `movement_updated` or `correction`) that the owner
+  approves together, or she records it in the admin's Transfers screen.
+- Only branches with `fulfillsOnlineOrders` count for online stock; say which ones they are.
+- Table columns add `sucursal`; the purchase-order draft says where each line is delivered.
+
 ## Procedure
 
 1. Run `pnpm ops:analyze` (or read today's analysis). Check: variants with null `unitCost`, negative stock, products in `DRAFT`.
