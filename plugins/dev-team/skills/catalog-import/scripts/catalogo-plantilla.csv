@@ -1,0 +1,5 @@
+handle,title,description,vendor,product_type,tags,option1_name,option1_value,option2_name,option2_value,sku,price,compare_at_price,cost,image_url,inv:Centro,inv:San Pedro
+vela-lavanda,Vela de lavanda,Vela de soya con aceite esencial de lavanda.,Mi Marca,Velas,velas;aromas,Tamaño,Chica,,,VEL-LAV-CH,180,,72,https://example.com/vela-lavanda.jpg,12,8
+vela-lavanda,,,,,,Tamaño,Grande,,,VEL-LAV-GR,320,,128,,6,4
+playera-basica,Playera básica,Algodón 100%.,Mi Marca,Ropa,ropa,Talla,M,Color,Rosa,PLA-M-ROS,390,450,150,https://example.com/playera.jpg,5,3
+playera-basica,,,,,,Talla,G,Color,Rosa,PLA-G-ROS,390,450,150,,2,0
